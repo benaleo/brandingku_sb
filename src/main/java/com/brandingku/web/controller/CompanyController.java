@@ -20,7 +20,7 @@ import java.net.URI;
 @RestController
 @AllArgsConstructor
 @RequestMapping(CompanyController.urlRoute)
-@Tag(name = "Company API")
+@Tag(name = "Companies API")
 @Slf4j
 @SecurityRequirement(name = "Authorization")
 public class CompanyController {
@@ -30,7 +30,7 @@ public class CompanyController {
     private CompanyService service;
 
     @PreAuthorize("hasAuthority('company.view')")
-    @Operation(summary = "Get List Company", description = "Get List Company")
+    @Operation(summary = "Get List Companies", description = "Get List Companies")
     @GetMapping
     public ResponseEntity<?> listIndex(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
@@ -51,7 +51,7 @@ public class CompanyController {
     }
 
     @PreAuthorize("hasAuthority('company.read')")
-    @Operation(summary = "Get detail Company", description = "Get detail Company")
+    @Operation(summary = "Get detail Companies", description = "Get detail Companies")
     @GetMapping("{id}")
     public ResponseEntity<?> getById(@PathVariable("id") String id) {
         log.info("GET " + urlRoute + "/{id} endpoint hit");
@@ -65,7 +65,7 @@ public class CompanyController {
     }
 
     @PreAuthorize("hasAuthority('company.create')")
-    @Operation(summary = "Create Company", description = "Create Company")
+    @Operation(summary = "Create Companies", description = "Create Companies")
     @PostMapping
     public ResponseEntity<ApiResponse> create(@Valid @RequestBody CompanyModel.CreateRequest item) {
         log.info("POST " + urlRoute + " endpoint hit");
@@ -80,7 +80,7 @@ public class CompanyController {
     }
 
     @PreAuthorize("hasAuthority('company.update')")
-    @Operation(summary = "Update Company", description = "Update Company")
+    @Operation(summary = "Update Companies", description = "Update Companies")
     @PutMapping("{id}")
     public ResponseEntity<ApiResponse> update(@PathVariable("id") String id, @Valid @RequestBody CompanyModel.UpdateRequest item) {
         log.info("PUT " + urlRoute + "/{id} endpoint hit");
@@ -94,7 +94,7 @@ public class CompanyController {
     }
 
     @PreAuthorize("hasAuthority('company.delete')")
-    @Operation(summary = "Delete Company", description = "Delete Company")
+    @Operation(summary = "Delete Companies", description = "Delete Companies")
     @DeleteMapping("{id}")
     public ResponseEntity<ApiResponse> delete(@PathVariable("id") String id) {
         log.info("DELETE " + urlRoute + "/{id} endpoint hit");
