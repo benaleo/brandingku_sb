@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "company", indexes = {
         @Index(name = "idx_company_secure_id", columnList = "secure_id", unique = true)
 })
-public class Companies extends AbstractEntity implements SecureIdentifiable {
+public class Company extends AbstractEntity implements SecureIdentifiable {
 
     private String name;
     private String address;
@@ -24,7 +24,7 @@ public class Companies extends AbstractEntity implements SecureIdentifiable {
 
     @ManyToOne
     @JoinColumn(name = "parent_id", referencedColumnName = "secure_id")
-    private Companies parent;
+    private Company parent;
 
     @Override
     public Long getId() {

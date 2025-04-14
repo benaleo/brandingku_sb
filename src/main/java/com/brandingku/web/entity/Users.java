@@ -53,7 +53,7 @@ public class Users extends AbstractEntity implements UserDetails, SecureIdentifi
     @ManyToOne
     @JoinColumn(name = "company_id")
     @EqualsAndHashCode.Exclude
-    private Companies company;
+    private Company company;
 
 
 

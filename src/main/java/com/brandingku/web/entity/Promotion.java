@@ -6,27 +6,31 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.util.UUID;
+import java.time.LocalDateTime;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "product_galleries", indexes = {
-        @Index(name = "idx_product_galleries_secure_id", columnList = "secure_id", unique = true)
+@Table(name = "promotions", indexes = {
+        @Index(name = "idx_promotions_secure_id", columnList = "secure_id", unique = true)
 })
-public class ProductGalleries extends AbstractEntity{
+public class Promotion extends AbstractEntity{
 
     @Column(name = "name", nullable = false)
     private String name;
 
+    private LocalDateTime startDate;
+
+    private LocalDateTime endDate;
+
     @Column(columnDefinition = "text")
     private String urlFile;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id", referencedColumnName = "secure_id")
-    private Products product;
+    @Column(columnDefinition = "text")
+    private String urlDirect;
+
 
     @Override
     public Long getId() {return super.getId();}

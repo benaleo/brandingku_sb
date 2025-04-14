@@ -1,6 +1,6 @@
 package com.brandingku.web.service.impl;
 
-import com.brandingku.web.entity.Companies;
+import com.brandingku.web.entity.Company;
 import com.brandingku.web.entity.Roles;
 import com.brandingku.web.entity.Users;
 import com.brandingku.web.model.UserModel;
@@ -103,7 +103,7 @@ public class UserServiceImpl implements UserService {
         newUser.setPassword(passwordEncoder.encode(item.getPassword()));
         newUser.setIsActive(item.getIsActive());
 
-        Companies company = TreeGetEntity.parsingCompanyByProjection(item.getCompanyId(), companyRepository);
+        Company company = TreeGetEntity.parsingCompanyByProjection(item.getCompanyId(), companyRepository);
         newUser.setCompany(company);
 
         if (role != null) {
@@ -121,7 +121,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(item.getPassword() != null ? passwordEncoder.encode(item.getPassword()) : user.getPassword());
         user.setIsActive(item.getIsActive() != null ? item.getIsActive() : user.getIsActive());
 
-        Companies company = TreeGetEntity.parsingCompanyByProjection(item.getCompanyId(), companyRepository);
+        Company company = TreeGetEntity.parsingCompanyByProjection(item.getCompanyId(), companyRepository);
         user.setCompany(company);
 
         if (role != null) {

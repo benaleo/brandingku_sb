@@ -3,7 +3,6 @@ package com.brandingku.web.entity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -13,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "product_favorites")
-public class ProductFavorites {
+public class ProductFavourite {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +23,7 @@ public class ProductFavorites {
 
     @ManyToOne
     @JoinColumn(name = "product_id")
-    private Products product;
+    private Product product;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

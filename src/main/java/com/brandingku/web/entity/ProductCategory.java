@@ -1,12 +1,14 @@
 package com.brandingku.web.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
@@ -14,24 +16,19 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "promotions", indexes = {
-        @Index(name = "idx_promotions_secure_id", columnList = "secure_id", unique = true)
+@Table(name = "product_categories", indexes = {
+        @Index(name = "idx_product_categories_secure_id", columnList = "secure_id", unique = true)
 })
-public class Promotions extends AbstractEntity{
+public class ProductCategory extends AbstractEntity{
 
     @Column(name = "name", nullable = false)
     private String name;
 
-    private LocalDateTime startDate;
-
-    private LocalDateTime endDate;
-
-    @Column(columnDefinition = "text")
-    private String urlFile;
+    @Column(nullable = false, unique = true)
+    private String slug = UUID.randomUUID().toString();
 
     @Column(columnDefinition = "text")
-    private String urlDirect;
-
+    private String description;
 
     @Override
     public Long getId() {return super.getId();}

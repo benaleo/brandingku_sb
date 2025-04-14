@@ -1,6 +1,6 @@
 package com.brandingku.web.repository;
 
-import com.brandingku.web.entity.Companies;
+import com.brandingku.web.entity.Company;
 import com.brandingku.web.model.projection.CastIdSecureIdProjection;
 import com.brandingku.web.model.projection.CompanyIndexProjection;
 import org.springframework.data.domain.Page;
@@ -13,11 +13,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface CompanyRepository extends JpaRepository<Companies, Long> {
+public interface CompanyRepository extends JpaRepository<Company, Long> {
 
     @Query("""
             SELECT new com.brandingku.web.model.projection.CastIdSecureIdProjection(d.id, d.secureId)
-            FROM Companies d
+            FROM Company d
             WHERE d.secureId = :secureId
             """)
     Optional<CastIdSecureIdProjection> findIdBySecureId(String secureId);
@@ -28,7 +28,7 @@ public interface CompanyRepository extends JpaRepository<Companies, Long> {
                 c.secureId, c.name, c.address, c.city, c.phone, c.parent.secureId,
                 c.createdAt, uc.name, c.updatedAt, uu.name
             )
-            FROM Companies c
+            FROM Company c
             LEFT JOIN Users uc ON uc.id = c.createdBy
             LEFT JOIN Users uu ON uu.id = c.updatedBy
             WHERE
@@ -39,7 +39,7 @@ public interface CompanyRepository extends JpaRepository<Companies, Long> {
     Page<CompanyIndexProjection> findDataByKeyword(String keyword, Pageable pageable, Boolean isParent);
     @Query("""
             SELECT c.name
-            FROM Companies c
+            FROM Company c
             WHERE 
                 c.parent.secureId = :parentId AND
                 c.parent IS NOT NULL
@@ -48,8 +48,8 @@ public interface CompanyRepository extends JpaRepository<Companies, Long> {
 
     @Query("""
             SELECT c
-            FROM Companies c
+            FROM Company c
             WHERE LOWER(c.name) = LOWER(:companyName)
             """)
-    Optional<Companies> findByName(String companyName);
+    Optional<Company> findByName(String companyName);
 }

@@ -1,6 +1,6 @@
 package com.brandingku.web.service.impl;
 
-import com.brandingku.web.entity.Companies;
+import com.brandingku.web.entity.Company;
 import com.brandingku.web.model.CompanyModel;
 import com.brandingku.web.model.projection.CompanyIndexProjection;
 import com.brandingku.web.model.search.ListOfFilterPagination;
@@ -66,24 +66,24 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public CompanyModel.DetailResponse findDataBySecureId(String id) {
-        Companies data = TreeGetEntity.parsingCompanyByProjection(id, companyRepository);
+        Company data = TreeGetEntity.parsingCompanyByProjection(id, companyRepository);
 
         return convertToDetailResponse(data);
     }
 
     @Override
     public CompanyModel.DetailResponse saveData(CompanyModel.CreateRequest item) {
-        Companies newData = new Companies();
+        Company newData = new Company();
         newData.setName(StringUtils.capitalize(item.getName()));
         newData.setAddress(item.getAddress());
         newData.setCity(item.getCity());
         newData.setPhone(item.getPhone());
-        Companies savedData = companyRepository.save(newData);
+        Company savedData = companyRepository.save(newData);
 
         for (String subCompanyName : item.getCompanyNames()){
-            Companies company = companyRepository.findByName(subCompanyName)
+            Company company = companyRepository.findByName(subCompanyName)
                     .orElseGet(() -> {
-                        Companies newCompany = new Companies();
+                        Company newCompany = new Company();
                         newCompany.setName(subCompanyName);
                         newCompany.setParent(savedData);
                         return companyRepository.save(newCompany);
@@ -98,23 +98,23 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public CompanyModel.DetailResponse updateData(String id, CompanyModel.UpdateRequest item) {
-        Companies data = TreeGetEntity.parsingCompanyByProjection(id, companyRepository);
+        Company data = TreeGetEntity.parsingCompanyByProjection(id, companyRepository);
         data.setName(StringUtils.capitalize(item.getName()));
         data.setAddress(item.getAddress() != null ? item.getAddress() : data.getAddress());
         data.setCity(item.getCity() != null ? item.getCity() : data.getCity());
         data.setPhone(item.getPhone() != null ? item.getPhone() : data.getPhone());
-        Companies savedData = companyRepository.save(data);
+        Company savedData = companyRepository.save(data);
 
         return convertToDetailResponse(savedData);
     }
 
     @Override
     public void deleteData(String id) {
-        Companies data = TreeGetEntity.parsingCompanyByProjection(id, companyRepository);
+        Company data = TreeGetEntity.parsingCompanyByProjection(id, companyRepository);
         companyRepository.delete(data);
     }
 
-    private CompanyModel.DetailResponse convertToDetailResponse(Companies data) {
+    private CompanyModel.DetailResponse convertToDetailResponse(Company data) {
         List<String> companyNames = companyRepository.findAllByParentId(data.getSecureId());
         return new CompanyModel.DetailResponse(
                 data.getName(),
