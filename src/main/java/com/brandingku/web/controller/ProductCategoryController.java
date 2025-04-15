@@ -47,6 +47,7 @@ public class ProductCategoryController {
         }
     }
 
+    @Operation(description = "Get detail product category")
     @RequestMapping("{id}")
     public ResponseEntity<?> getDetailProductCategory(@PathVariable("id") String id) {
         try {
@@ -58,6 +59,7 @@ public class ProductCategoryController {
         }
     }
 
+    @Operation(description = "Create product category")
     @PostMapping
     public ResponseEntity<ApiResponse> createProductCategory(@Valid @RequestBody ProductCategoryModel.CreateProductCategoryRequest req) {
         try {
@@ -69,6 +71,7 @@ public class ProductCategoryController {
         }
     }
 
+    @Operation(description = "Update product category")
     @PutMapping("{id}")
     public ResponseEntity<ApiResponse> updateProductCategory(@PathVariable("id") String id, @Valid @RequestBody ProductCategoryModel.UpdateProductCategoryRequest req) {
         try {
@@ -80,6 +83,7 @@ public class ProductCategoryController {
         }
     }
 
+    @Operation(description = "Delete product category")
     @DeleteMapping("{id}")
     public ResponseEntity<ApiResponse> deleteProductCategory(@PathVariable("id") String id) {
         try {
