@@ -31,7 +31,7 @@ public class Product extends AbstractEntity{
 
     private Integer discount;
 
-    private Integer discountType;
+    private String discountType;
 
     private Integer quantity;
 

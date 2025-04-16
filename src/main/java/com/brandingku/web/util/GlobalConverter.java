@@ -42,20 +42,20 @@ public class GlobalConverter {
             T dto, D data, UserRepository userRepository
     ) {
         dto.setId(data.getSecureId());
-        dto.setCreatedAt(data.getCreatedAt() != null ? Formatter.formatLocalDateTime(data.getCreatedAt()) : null);
-        dto.setUpdatedAt(data.getUpdatedAt() != null ? Formatter.formatLocalDateTime(data.getUpdatedAt()) : null);
-        dto.setCreatedBy(data.getCreatedBy() != null ? userRepository.findById(data.getCreatedBy()).orElseThrow().getName() : null);
-        dto.setUpdatedBy(data.getUpdatedBy() != null ? userRepository.findById(data.getUpdatedBy()).orElseThrow().getName() : null);
+        dto.setCreated_at(data.getCreatedAt() != null ? Formatter.formatLocalDateTime(data.getCreatedAt()) : null);
+        dto.setUpdated_at(data.getUpdatedAt() != null ? Formatter.formatLocalDateTime(data.getUpdatedAt()) : null);
+        dto.setCreated_by(data.getCreatedBy() != null ? userRepository.findById(data.getCreatedBy()).orElseThrow().getName() : null);
+        dto.setUpdated_by(data.getUpdatedBy() != null ? userRepository.findById(data.getUpdatedBy()).orElseThrow().getName() : null);
     }
 
     public static <T extends AdminModelBaseDTOResponse> void CmsIDTimeStampResponseAndIdProjection(
             T dto, String dataId, LocalDateTime createdAt, LocalDateTime updatedAt, String createdBy, String updatedBy
     ) {
         dto.setId(dataId);
-        dto.setCreatedAt(createdAt != null ? Formatter.formatLocalDateTime(createdAt) : null);
-        dto.setUpdatedAt(updatedAt != null ? Formatter.formatLocalDateTime(updatedAt) : null);
-        dto.setCreatedBy(createdBy);
-        dto.setUpdatedBy(updatedBy);
+        dto.setCreated_at(createdAt != null ? Formatter.formatLocalDateTime(createdAt) : null);
+        dto.setUpdated_at(updatedAt != null ? Formatter.formatLocalDateTime(updatedAt) : null);
+        dto.setCreated_by(createdBy);
+        dto.setUpdated_by(updatedBy);
     }
 
 

@@ -5,8 +5,8 @@ import lombok.Data;
 @Data
 public class AdminModelBaseDTOResponse {
     private String id;
-    private String createdAt;
-    private String updatedAt;
-    private String createdBy;
-    private String updatedBy;
+    private String created_at;
+    private String updated_at;
+    private String created_by;
+    private String updated_by;
 }
