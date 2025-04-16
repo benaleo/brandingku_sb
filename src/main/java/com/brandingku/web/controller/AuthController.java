@@ -2,7 +2,9 @@ package com.brandingku.web.controller;
 
 import com.brandingku.web.entity.Users;
 import com.brandingku.web.model.AuthModel;
+import com.brandingku.web.model.TokenResponse;
 import com.brandingku.web.repository.UserRepository;
+import com.brandingku.web.response.ApiResponse;
 import com.brandingku.web.security.JwtUtil;
 import com.brandingku.web.service.util.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +32,7 @@ public class AuthController {
     private final JwtUtil jwtUtil;
 
     @PostMapping("/login")
-    public ResponseEntity<String> authenticateUser(@RequestBody AuthModel.loginRequest request) {
+    public ResponseEntity<?> authenticateUser(@RequestBody AuthModel.loginRequest request) {
         try {
             Users user = userRepository.findByEmail(request.getEmail()).orElse(null);
             log.info("User email in: {}", (user != null ? user.getEmail() : "unknown"));
@@ -45,10 +47,10 @@ public class AuthController {
             log.info("token: {}", token);
 
             // Generate JWT token after successful authentication
-            return ResponseEntity.ok(token);
+            return ResponseEntity.ok().body(new TokenResponse(true, "Success login", token));
         } catch (Exception e) {
             log.error("Error : {}", e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new TokenResponse(false, e.getMessage(), null));
         }
     }
 
