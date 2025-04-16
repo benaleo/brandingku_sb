@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @Repository
@@ -40,4 +41,6 @@ public interface ProductCategoryRepository extends JpaRepository<ProductCategory
     @Transactional
     @Query("UPDATE ProductCategory d SET d.isDelete = true WHERE d = :data")
     void softDelete(ProductCategory data);
+
+    Optional<ProductCategory> findBySecureId(String s);
 }

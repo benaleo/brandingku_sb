@@ -1,10 +1,13 @@
 package com.brandingku.web.controller;
 
+import com.brandingku.web.entity.ProductCategory;
 import com.brandingku.web.model.CompilerPagination;
 import com.brandingku.web.model.ProductCategoryModel;
+import com.brandingku.web.repository.ProductCategoryRepository;
 import com.brandingku.web.response.ApiResponse;
 import com.brandingku.web.response.ResultPageResponseDTO;
 import com.brandingku.web.service.ProductCategoryService;
+import com.brandingku.web.util.TreeGetEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,6 +30,7 @@ public class ProductCategoryController {
     static final String urlRoute = "/cms/v1/product-category";
 
     private final ProductCategoryService productCategoryService;
+    private final ProductCategoryRepository productCategoryRepository;
 
     @Operation(description = "Get all product category")
     @GetMapping
@@ -52,7 +56,7 @@ public class ProductCategoryController {
     public ResponseEntity<?> getDetailProductCategory(@PathVariable("id") String id) {
         try {
             ProductCategoryModel.DetailProductCategoryResponse response = productCategoryService.getDetailProductCategory(id);
-            return ResponseEntity.ok().body(new ApiResponse(true, "Success get detail product category", productCategoryService.getDetailProductCategory(id)));
+            return ResponseEntity.ok().body(new ApiResponse(true, "Success get detail product category", response));
         } catch (Exception e) {
             log.error("Error get detail product category : {}", e.getMessage(), e);
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));

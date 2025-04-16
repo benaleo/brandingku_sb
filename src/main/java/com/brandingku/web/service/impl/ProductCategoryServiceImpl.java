@@ -64,17 +64,17 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 
     @Override
     public ProductCategoryModel.DetailProductCategoryResponse getDetailProductCategory(String id) {
-        ProductCategory data = TreeGetEntity.parsingProductCategoryByProjection(id, productCategoryRepository);
+        ProductCategory data = productCategoryRepository.findBySecureId(id).orElse(null);
         return new ProductCategoryModel.DetailProductCategoryResponse(
-                data.getName(),
-                data.getSlug(),
-                data.getDescription()
+                data == null ? null : data.getName(),
+                data == null ? null : data.getSlug(),
+                data == null ? null : data.getDescription()
         );
     }
 
     @Override
     public void createProductCategory(ProductCategoryModel.@Valid CreateProductCategoryRequest req) {
-        Users user = TreeGetEntity.parsingUserByProjection(ContextPrincipal.getSecureUserId(), userRepository);
+        Users user = userRepository.findById(ContextPrincipal.getId()).orElse(null);
 
         long countAllData = productCategoryRepository.count();
 
@@ -82,24 +82,26 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         data.setName(req.name());
         data.setSlug(req.name() + "-" + (countAllData + 1L));
         data.setDescription(req.description());
-        GlobalConverter.CmsAdminCreateAtBy(data, user.getId());
+        GlobalConverter.CmsAdminCreateAtBy(data, user != null ? user.getId() : null);
         productCategoryRepository.save(data);
     }
 
     @Override
     public void updateProductCategory(String id, ProductCategoryModel.UpdateProductCategoryRequest req) {
-        Users user = TreeGetEntity.parsingUserByProjection(ContextPrincipal.getSecureUserId(), userRepository);
+        Users user = userRepository.findById(ContextPrincipal.getId()).orElse(null);
 
-        ProductCategory data = TreeGetEntity.parsingProductCategoryByProjection(id, productCategoryRepository);
-        data.setName(req.name() != null ? req.name() : data.getName());
-        data.setDescription(req.description() != null ? req.description() : data.getDescription());
-        GlobalConverter.CmsAdminUpdateAtBy(data, user.getId());
-        productCategoryRepository.save(data);
+        ProductCategory data = productCategoryRepository.findBySecureId(id).orElse(null);
+        if (data != null) {
+            data.setName(req.name() != null ? req.name() : data.getName());
+            data.setDescription(req.description() != null ? req.description() : data.getDescription());
+            GlobalConverter.CmsAdminUpdateAtBy(data, user != null ? user.getId() : null);
+            productCategoryRepository.save(data);
+        }
     }
 
     @Override
     public void deleteProductCategory(String id) {
-        ProductCategory data = TreeGetEntity.parsingProductCategoryByProjection(id, productCategoryRepository);
+        ProductCategory data = productCategoryRepository.findBySecureId(id).orElse(null);
         productCategoryRepository.softDelete(data);
     }
 }
