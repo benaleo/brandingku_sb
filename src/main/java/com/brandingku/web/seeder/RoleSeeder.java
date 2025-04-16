@@ -98,12 +98,12 @@ public class RoleSeeder implements CommandLineRunner {
         roleRepository.save(adminRole);
 
         // make first admin
-        if (userRepository.findByEmail("admin@pinter.id").isEmpty()){
+        if (userRepository.findByEmail("admin@brandingku.com").isEmpty()){
             Users user = new Users();
             user.setRole(adminRole);
             user.setName("ADMIN");
-            user.setEmail("admin@pinter.id");
-            user.setPassword(passwordEncoder.encode("adminberi"));
+            user.setEmail("admin@brandingku.com");
+            user.setPassword(passwordEncoder.encode("kosongan"));
             userRepository.save(user);
         }
     }

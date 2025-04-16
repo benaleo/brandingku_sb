@@ -1,17 +1,20 @@
 package com.brandingku.web.service.impl;
 
-import com.brandingku.web.model.CompanyModel;
+import com.brandingku.web.entity.ProductCategory;
+import com.brandingku.web.entity.Users;
 import com.brandingku.web.model.CompilerPagination;
 import com.brandingku.web.model.ProductCategoryModel;
-import com.brandingku.web.model.projection.CompanyIndexProjection;
 import com.brandingku.web.model.projection.ProductCategoryIndexProjection;
 import com.brandingku.web.model.search.ListOfFilterPagination;
 import com.brandingku.web.model.search.SavedKeywordAndPageable;
 import com.brandingku.web.repository.ProductCategoryRepository;
+import com.brandingku.web.repository.UserRepository;
 import com.brandingku.web.response.PageCreateReturn;
 import com.brandingku.web.response.ResultPageResponseDTO;
 import com.brandingku.web.service.ProductCategoryService;
+import com.brandingku.web.util.ContextPrincipal;
 import com.brandingku.web.util.GlobalConverter;
+import com.brandingku.web.util.TreeGetEntity;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +31,7 @@ import java.util.stream.Collectors;
 public class ProductCategoryServiceImpl implements ProductCategoryService {
 
     private final ProductCategoryRepository productCategoryRepository;
+    private final UserRepository userRepository;
 
     @Override
     public ResultPageResponseDTO<ProductCategoryModel.ListProductCategoryResponse> getAllProductCategory(CompilerPagination f) {
@@ -60,21 +64,42 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 
     @Override
     public ProductCategoryModel.DetailProductCategoryResponse getDetailProductCategory(String id) {
-        return null;
+        ProductCategory data = TreeGetEntity.parsingProductCategoryByProjection(id, productCategoryRepository);
+        return new ProductCategoryModel.DetailProductCategoryResponse(
+                data.getName(),
+                data.getSlug(),
+                data.getDescription()
+        );
     }
 
     @Override
     public void createProductCategory(ProductCategoryModel.@Valid CreateProductCategoryRequest req) {
+        Users user = TreeGetEntity.parsingUserByProjection(ContextPrincipal.getSecureUserId(), userRepository);
 
+        long countAllData = productCategoryRepository.count();
+
+        ProductCategory data = new ProductCategory();
+        data.setName(req.name());
+        data.setSlug(req.name() + "-" + (countAllData + 1L));
+        data.setDescription(req.description());
+        GlobalConverter.CmsAdminCreateAtBy(data, user.getId());
+        productCategoryRepository.save(data);
     }
 
     @Override
     public void updateProductCategory(String id, ProductCategoryModel.UpdateProductCategoryRequest req) {
+        Users user = TreeGetEntity.parsingUserByProjection(ContextPrincipal.getSecureUserId(), userRepository);
 
+        ProductCategory data = TreeGetEntity.parsingProductCategoryByProjection(id, productCategoryRepository);
+        data.setName(req.name() != null ? req.name() : data.getName());
+        data.setDescription(req.description() != null ? req.description() : data.getDescription());
+        GlobalConverter.CmsAdminUpdateAtBy(data, user.getId());
+        productCategoryRepository.save(data);
     }
 
     @Override
     public void deleteProductCategory(String id) {
-
+        ProductCategory data = TreeGetEntity.parsingProductCategoryByProjection(id, productCategoryRepository);
+        productCategoryRepository.softDelete(data);
     }
 }

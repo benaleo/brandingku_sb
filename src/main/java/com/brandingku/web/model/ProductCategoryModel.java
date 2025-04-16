@@ -15,16 +15,22 @@ public class ProductCategoryModel {
         private String description;
     }
 
-    @Data
-    @AllArgsConstructor
-    public static class DetailProductCategoryResponse {
+    public record DetailProductCategoryResponse(
+            String name,
+            String slug,
+            String description
+    ) {
     }
 
-    @Data
-    public static class CreateProductCategoryRequest {
+    public record CreateProductCategoryRequest(
+            String name,
+            String description
+    ) {
     }
 
-    @Data
-    public static class UpdateProductCategoryRequest {
+    public record UpdateProductCategoryRequest(
+            String name,
+            String description
+    ) {
     }
 }

@@ -1,9 +1,11 @@
 package com.brandingku.web.util;
 
 import com.brandingku.web.entity.Company;
+import com.brandingku.web.entity.ProductCategory;
 import com.brandingku.web.entity.Roles;
 import com.brandingku.web.entity.Users;
 import com.brandingku.web.repository.CompanyRepository;
+import com.brandingku.web.repository.ProductCategoryRepository;
 import com.brandingku.web.repository.RoleRepository;
 import com.brandingku.web.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -43,7 +45,7 @@ public class TreeGetEntity {
         );
     }
 
-      public static Company parsingCompanyByProjection(String secureId, CompanyRepository repository) {
+    public static Company parsingCompanyByProjection(String secureId, CompanyRepository repository) {
         return getIdBySecureId(
                 secureId,
                 repository::findIdBySecureId,
@@ -52,7 +54,14 @@ public class TreeGetEntity {
         );
     }
 
-
+    public static ProductCategory parsingProductCategoryByProjection(String secureId, ProductCategoryRepository repository) {
+        return getIdBySecureId(
+                secureId,
+                repository::findIdBySecureId,
+                projection -> repository.findById(projection.getId()),
+                "Product Category not found"
+        );
+    }
 
 
 }

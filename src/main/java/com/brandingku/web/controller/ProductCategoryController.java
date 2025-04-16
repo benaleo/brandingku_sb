@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 
 @RestController
-@RequiredArgsConstructor
+@AllArgsConstructor
 @RequestMapping(ProductCategoryController.urlRoute)
-@Tag(name = "product category")
+@Tag(name = "product category API")
 @Slf4j
 @SecurityRequirement(name = "Authorization")
 public class ProductCategoryController {
@@ -29,7 +29,7 @@ public class ProductCategoryController {
     private final ProductCategoryService productCategoryService;
 
     @Operation(description = "Get all product category")
-    @RequestMapping
+    @GetMapping
     public ResponseEntity<?> getAllProductCategory(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
@@ -48,7 +48,7 @@ public class ProductCategoryController {
     }
 
     @Operation(description = "Get detail product category")
-    @RequestMapping("{id}")
+    @GetMapping("{id}")
     public ResponseEntity<?> getDetailProductCategory(@PathVariable("id") String id) {
         try {
             ProductCategoryModel.DetailProductCategoryResponse response = productCategoryService.getDetailProductCategory(id);
