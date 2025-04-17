@@ -22,7 +22,7 @@ public class JwtUtil {
     @Value("${app.jwtSecret}")
     private String SECRET_KEY;
 
-    private static final long EXPIRATION_TIME = 1000 * 60 * 60; // 1 hour expiration
+    private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 7; // 1 hour expiration
 
     // Inject the secret key from application properties
     public JwtUtil(@Value("${app.jwtSecret}") String secretKey) {
