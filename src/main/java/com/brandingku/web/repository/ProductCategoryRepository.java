@@ -39,8 +39,15 @@ public interface ProductCategoryRepository extends JpaRepository<ProductCategory
 
     @Modifying
     @Transactional
-    @Query("UPDATE ProductCategory d SET d.isDelete = true WHERE d = :data")
-    void softDelete(ProductCategory data);
+    @Query("""
+            UPDATE ProductCategory d 
+            SET d.isDelete = true,
+                d.updatedAt = CURRENT_TIMESTAMP,
+                d.updatedBy = :id,
+                d.slug = d.slug || '-' || CURRENT_TIMESTAMP
+            WHERE d = :data
+            """)
+    void softDelete(ProductCategory data, Long id);
 
     Optional<ProductCategory> findBySecureId(String s);
 }

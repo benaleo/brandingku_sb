@@ -24,12 +24,14 @@ public class ProductCategoryModel {
 
     public record CreateProductCategoryRequest(
             String name,
+            String slug,
             String description
     ) {
     }
 
     public record UpdateProductCategoryRequest(
             String name,
+            String slug,
             String description
     ) {
     }

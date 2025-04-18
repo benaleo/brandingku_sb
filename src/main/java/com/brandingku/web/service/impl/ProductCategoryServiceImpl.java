@@ -14,7 +14,6 @@ import com.brandingku.web.response.ResultPageResponseDTO;
 import com.brandingku.web.service.ProductCategoryService;
 import com.brandingku.web.util.ContextPrincipal;
 import com.brandingku.web.util.GlobalConverter;
-import com.brandingku.web.util.TreeGetEntity;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -80,7 +79,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 
         ProductCategory data = new ProductCategory();
         data.setName(req.name());
-        data.setSlug(req.name() + "-" + (countAllData + 1L));
+        data.setSlug(req.slug());
         data.setDescription(req.description());
         GlobalConverter.CmsAdminCreateAtBy(data, user != null ? user.getId() : null);
         productCategoryRepository.save(data);
@@ -93,6 +92,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         ProductCategory data = productCategoryRepository.findBySecureId(id).orElse(null);
         if (data != null) {
             data.setName(req.name() != null ? req.name() : data.getName());
+            data.setSlug(req.slug() != null ? req.slug() : data.getSlug());
             data.setDescription(req.description() != null ? req.description() : data.getDescription());
             GlobalConverter.CmsAdminUpdateAtBy(data, user != null ? user.getId() : null);
             productCategoryRepository.save(data);
@@ -101,7 +101,8 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 
     @Override
     public void deleteProductCategory(String id) {
+        Users user = userRepository.findById(ContextPrincipal.getId()).orElse(null);
         ProductCategory data = productCategoryRepository.findBySecureId(id).orElse(null);
-        productCategoryRepository.softDelete(data);
+        productCategoryRepository.softDelete(data, user != null ? user.getId() : null);
     }
 }
