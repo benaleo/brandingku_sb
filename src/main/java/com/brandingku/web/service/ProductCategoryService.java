@@ -4,6 +4,9 @@ import com.brandingku.web.model.CompilerPagination;
 import com.brandingku.web.model.ProductCategoryModel;
 import com.brandingku.web.response.ResultPageResponseDTO;
 import jakarta.validation.Valid;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 public interface ProductCategoryService {
     ResultPageResponseDTO<ProductCategoryModel.ListProductCategoryResponse> getAllProductCategory(CompilerPagination f);
@@ -15,4 +18,6 @@ public interface ProductCategoryService {
     void updateProductCategory(String id, ProductCategoryModel.UpdateProductCategoryRequest req);
 
     void deleteProductCategory(String id);
+
+    void postImageProductCategory(String id, MultipartFile file) throws IOException;
 }

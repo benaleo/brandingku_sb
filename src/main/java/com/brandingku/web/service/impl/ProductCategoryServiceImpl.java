@@ -12,6 +12,7 @@ import com.brandingku.web.repository.UserRepository;
 import com.brandingku.web.response.PageCreateReturn;
 import com.brandingku.web.response.ResultPageResponseDTO;
 import com.brandingku.web.service.ProductCategoryService;
+import com.brandingku.web.service.util.UrlConverterService;
 import com.brandingku.web.util.ContextPrincipal;
 import com.brandingku.web.util.GlobalConverter;
 import jakarta.validation.Valid;
@@ -20,7 +21,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,6 +34,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 
     private final ProductCategoryRepository productCategoryRepository;
     private final UserRepository userRepository;
+    private final UrlConverterService urlConverterService;
 
     @Override
     public ResultPageResponseDTO<ProductCategoryModel.ListProductCategoryResponse> getAllProductCategory(CompilerPagination f) {
@@ -50,6 +54,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
             dto.setName(c.getName());
             dto.setSlug(c.getSlug());
             dto.setDescription(c.getDescription());
+            dto.setImage(c.getImage());
 
             GlobalConverter.CmsIDTimeStampResponseAndIdProjection(dto, c.getSecureId(), c.getCreatedAt(), c.getUpdatedAt(), c.getCreatedBy(), c.getCreatedBy());
             return dto;
@@ -104,5 +109,14 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         Users user = userRepository.findById(ContextPrincipal.getId()).orElse(null);
         ProductCategory data = productCategoryRepository.findBySecureId(id).orElse(null);
         productCategoryRepository.softDelete(data, user != null ? user.getId() : null);
+    }
+
+    @Override
+    public void postImageProductCategory(String id, MultipartFile file) throws IOException {
+        ProductCategory data = productCategoryRepository.findBySecureId(id).orElse(null);
+        if (data != null) {
+            data.setImage(urlConverterService.saveUrlImageProductCategory(file));
+            productCategoryRepository.save(data);
+        }
     }
 }

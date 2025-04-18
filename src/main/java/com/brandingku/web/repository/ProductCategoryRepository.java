@@ -19,7 +19,7 @@ public interface ProductCategoryRepository extends JpaRepository<ProductCategory
 
     @Query("""
             SELECT new com.brandingku.web.model.projection.ProductCategoryIndexProjection(
-                pc.name, pc.slug, pc.description,
+                pc.name, pc.slug, pc.description, pc.image,
                 pc.id, pc.secureId, pc.createdAt, uc.name, pc.updatedAt, uu.name
             )
             FROM ProductCategory pc

@@ -14,8 +14,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URI;
 
@@ -71,6 +73,18 @@ public class ProductCategoryController {
             return ResponseEntity.created(URI.create(urlRoute)).body(new ApiResponse(true, "Success create product category", null));
         } catch (Exception e) {
             log.error("Error create product category : {}", e.getMessage(), e);
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
+        }
+    }
+
+    @Operation(description = "Post image product category")
+    @PutMapping(value = "{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResponse> postImageProductCategory(@PathVariable("id") String id, @RequestParam("file") MultipartFile file) {
+        try {
+            productCategoryService.postImageProductCategory(id, file);
+            return ResponseEntity.ok().body(new ApiResponse(true, "Success post image product category", null));
+        } catch (Exception e) {
+            log.error("Error post image product category : {}", e.getMessage(), e);
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
         }
     }

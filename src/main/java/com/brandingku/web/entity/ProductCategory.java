@@ -30,6 +30,9 @@ public class ProductCategory extends AbstractEntity{
     @Column(columnDefinition = "text")
     private String description;
 
+    @Column(columnDefinition = "text")
+    private String image;
+
     @Override
     public Long getId() {return super.getId();}
 

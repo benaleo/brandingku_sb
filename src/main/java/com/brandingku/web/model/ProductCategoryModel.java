@@ -13,6 +13,7 @@ public class ProductCategoryModel {
         private String name;
         private String slug;
         private String description;
+        private String image;
     }
 
     public record DetailProductCategoryResponse(
