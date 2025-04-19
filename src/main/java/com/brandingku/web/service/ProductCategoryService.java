@@ -1,5 +1,6 @@
 package com.brandingku.web.service;
 
+import com.brandingku.web.model.AppLandingFeaturedCategoryResponse;
 import com.brandingku.web.model.CompilerPagination;
 import com.brandingku.web.model.ProductCategoryModel;
 import com.brandingku.web.response.ResultPageResponseDTO;
@@ -20,4 +21,7 @@ public interface ProductCategoryService {
     void deleteProductCategory(String id);
 
     void postImageProductCategory(String id, MultipartFile file) throws IOException;
+
+    // App
+    ResultPageResponseDTO<AppLandingFeaturedCategoryResponse> getFeaturedCategory(CompilerPagination f);
 }

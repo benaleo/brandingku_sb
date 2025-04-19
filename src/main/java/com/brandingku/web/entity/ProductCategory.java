@@ -1,9 +1,6 @@
 package com.brandingku.web.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Index;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -32,6 +29,13 @@ public class ProductCategory extends AbstractEntity{
 
     @Column(columnDefinition = "text")
     private String image;
+
+    @Column(name = "is_landing_page")
+    private Boolean isLandingPage = false;
+
+    @ManyToOne
+    @JoinColumn(name = "parent_id", referencedColumnName = "secure_id")
+    private ProductCategory parent;
 
     @Override
     public Long getId() {return super.getId();}

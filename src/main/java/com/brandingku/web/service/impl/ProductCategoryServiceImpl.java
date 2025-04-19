@@ -2,6 +2,7 @@ package com.brandingku.web.service.impl;
 
 import com.brandingku.web.entity.ProductCategory;
 import com.brandingku.web.entity.Users;
+import com.brandingku.web.model.AppLandingFeaturedCategoryResponse;
 import com.brandingku.web.model.CompilerPagination;
 import com.brandingku.web.model.ProductCategoryModel;
 import com.brandingku.web.model.projection.ProductCategoryIndexProjection;
@@ -118,5 +119,28 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
             data.setImage(urlConverterService.saveUrlImageProductCategory(file));
             productCategoryRepository.save(data);
         }
+    }
+
+    @Override
+    public ResultPageResponseDTO<AppLandingFeaturedCategoryResponse> getFeaturedCategory(CompilerPagination f) {
+        SavedKeywordAndPageable set = GlobalConverter.appsCreatePageable(f.pages(), f.limit(), f.sortBy(), f.direction(), f.keyword(), null);
+        // Use a correct Pageable for fetching the next page
+        Page<ProductCategory> pageResult = productCategoryRepository.findAllByIsActiveIsTrueAndIsLandingPageIsTrueAndParentIdIsNull(set.pageable());
+
+        // Map the data to the DTOs
+        List<AppLandingFeaturedCategoryResponse> dtos = pageResult.stream().map((c) -> {
+            return new AppLandingFeaturedCategoryResponse(
+                    c.getName(),
+                    c.getSlug(),
+                    c.getDescription(),
+                    c.getImage()
+            );
+
+        }).collect(Collectors.toList());
+
+        return PageCreateReturn.create(
+                pageResult,
+                dtos
+        );
     }
 }
