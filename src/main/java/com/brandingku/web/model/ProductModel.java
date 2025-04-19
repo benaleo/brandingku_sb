@@ -1,5 +1,6 @@
 package com.brandingku.web.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -20,11 +21,19 @@ public class ProductModel {
         private String discount_type;
         private Integer quantity;
         private String image;
+        private List<ProductGalleryOptions> galleries;
         private String highlight_image;
         private Boolean is_highlight;
         private Boolean is_recommended;
         private Boolean is_upsell;
         private String category_name;
+
+        @Data
+        @AllArgsConstructor
+        public static class ProductGalleryOptions {
+            private String id;
+            private String url;
+        }
     }
 
     public record DetailProductResponse(

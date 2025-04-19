@@ -1,12 +1,15 @@
 package com.brandingku.web.service.impl;
 
 import com.brandingku.web.entity.Product;
+import com.brandingku.web.entity.ProductGallery;
 import com.brandingku.web.entity.Users;
+import com.brandingku.web.exception.BadRequestException;
 import com.brandingku.web.model.CompilerPagination;
 import com.brandingku.web.model.ProductModel;
 import com.brandingku.web.model.search.ListOfFilterPagination;
 import com.brandingku.web.model.search.SavedKeywordAndPageable;
 import com.brandingku.web.repository.ProductCategoryRepository;
+import com.brandingku.web.repository.ProductGalleryRepository;
 import com.brandingku.web.repository.ProductRepository;
 import com.brandingku.web.repository.UserRepository;
 import com.brandingku.web.response.PageCreateReturn;
@@ -33,6 +36,7 @@ import java.util.stream.Collectors;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
+    private final ProductGalleryRepository productGalleryRepository;
     private final UserRepository userRepository;
     private final ProductCategoryRepository productCategoryRepository;
     private final UrlConverterService urlConverterService;
@@ -50,26 +54,7 @@ public class ProductServiceImpl implements ProductService {
         Page<Product> pageResult = productRepository.findDataByKeyword(set.keyword(), pageable);
 
         // Map the data to the DTOs
-        List<ProductModel.ListProductResponse> dtos = pageResult.stream().map((c) -> {
-            ProductModel.ListProductResponse dto = new ProductModel.ListProductResponse();
-            dto.setName(c.getName());
-            dto.setSlug(c.getSlug());
-            dto.setDescription(c.getDescription());
-            dto.setHighlight_description(c.getHighlightDescription());
-            dto.setPrice(c.getPrice());
-            dto.setDiscount(c.getDiscount());
-            dto.setDiscount_type(c.getDiscountType());
-            dto.setQuantity(c.getQuantity());
-            dto.setImage(c.getFirstImage());
-            dto.setHighlight_image(c.getHighlightImage());
-            dto.setIs_highlight(c.getIsHighlight());
-            dto.setIs_recommended(c.getIsRecommended());
-            dto.setIs_upsell(c.getIsUpsell());
-            dto.setCategory_name(c.getCategory() == null ? null : c.getCategory().getName());
-
-            GlobalConverter.CmsIDTimeStampResponseAndId(dto, c, userRepository);
-            return dto;
-        }).collect(Collectors.toList());
+        List<ProductModel.ListProductResponse> dtos = pageResult.stream().map(this::parseIndexProductResponse).collect(Collectors.toList());
 
         return PageCreateReturn.create(
                 pageResult,
@@ -144,13 +129,62 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void postHighlightProduct(String id, MultipartFile file, String description, Boolean isHighlight) throws IOException {
+    public ProductModel.ListProductResponse postHighlightProduct(String id, MultipartFile file, String description, Boolean isHighlight) throws IOException {
         Product data = productRepository.findBySecureId(id).orElse(null);
         if (data != null) {
             data.setHighlightImage(file == null ? data.getHighlightImage() : urlConverterService.saveUrlImageProduct(file));
             data.setHighlightDescription(description);
             data.setIsHighlight(isHighlight == null ? data.getIsHighlight() : isHighlight);
             productRepository.save(data);
+
+            return parseIndexProductResponse(data);
         }
+        throw new BadRequestException("Product not found");
+    }
+
+    @Override
+    public ProductModel.ListProductResponse postGalleryProduct(String id, List<MultipartFile> newFile, List<String> removeId) throws IOException {
+        Product data = productRepository.findBySecureId(id).orElse(null);
+        if (data != null) {
+            if (newFile != null) {
+                for (MultipartFile file : newFile) {
+                    ProductGallery gallery = new ProductGallery();
+                    gallery.setProduct(data);
+                    gallery.setUrlFile(urlConverterService.saveUrlImageProduct(file));
+                    productGalleryRepository.save(gallery);
+                }
+            }
+            if (removeId != null) {
+                productGalleryRepository.deleteAllBySecureIdIn(removeId);
+            }
+            return parseIndexProductResponse(data);
+        }
+        throw new BadRequestException("Product not found");
+    }
+
+    // parse index response
+    private ProductModel.ListProductResponse parseIndexProductResponse(Product c) {
+        ProductModel.ListProductResponse dto = new ProductModel.ListProductResponse();
+        dto.setName(c.getName());
+        dto.setSlug(c.getSlug());
+        dto.setDescription(c.getDescription());
+        dto.setHighlight_description(c.getHighlightDescription());
+        dto.setPrice(c.getPrice());
+        dto.setDiscount(c.getDiscount());
+        dto.setDiscount_type(c.getDiscountType());
+        dto.setQuantity(c.getQuantity());
+        dto.setImage(c.getFirstImage());
+        dto.setHighlight_image(c.getHighlightImage());
+        dto.setIs_highlight(c.getIsHighlight());
+        dto.setIs_recommended(c.getIsRecommended());
+        dto.setIs_upsell(c.getIsUpsell());
+
+        dto.setCategory_name(c.getCategory() == null ? null : c.getCategory().getName());
+        dto.setGalleries(c.getListGallery().stream()
+                .map(g -> new ProductModel.ListProductResponse.ProductGalleryOptions(g.getSecureId(), g.getUrlFile()))
+                .collect(Collectors.toList()));
+
+        GlobalConverter.CmsIDTimeStampResponseAndId(dto, c, userRepository);
+        return dto;
     }
 }
