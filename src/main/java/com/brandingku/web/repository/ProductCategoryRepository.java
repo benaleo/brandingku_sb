@@ -50,5 +50,14 @@ public interface ProductCategoryRepository extends JpaRepository<ProductCategory
 
     Optional<ProductCategory> findBySecureId(String s);
 
-    Page<ProductCategory> findAllByIsActiveIsTrueAndIsLandingPageIsTrueAndParentIdIsNull(Pageable pageable);
+    @Query("""
+            SELECT pc
+            FROM ProductCategory pc
+            WHERE
+                (:slug IS NULL OR pc.slug = :slug) AND
+                pc.isLandingPage = true AND
+                pc.isDelete = false AND
+                pc.isActive = true
+            """)
+    Page<ProductCategory> findAllOrBySlugInLanding(Pageable pageable, String slug);
 }

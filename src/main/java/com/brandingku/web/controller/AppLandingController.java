@@ -31,11 +31,12 @@ public class AppLandingController {
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
-            @RequestParam(name = "keyword", required = false) String keyword
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "slug", required = false) String slug
     ) {
         try{
             CompilerPagination f = new CompilerPagination(pages, limit, sortBy, direction, keyword);
-            ResultPageResponseDTO<AppLandingFeaturedCategoryResponse> response = productCategoryService.getFeaturedCategory(f);
+            ResultPageResponseDTO<AppLandingFeaturedCategoryResponse> response = productCategoryService.getFeaturedCategory(f, slug);
             return ResponseEntity.ok().body(new ApiResponse(true, "Success get featured category", response));
         } catch (Exception e){
             log.error("Error get featured category : {}", e.getMessage(), e);

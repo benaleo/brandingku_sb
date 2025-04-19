@@ -23,5 +23,5 @@ public interface ProductCategoryService {
     void postImageProductCategory(String id, MultipartFile file) throws IOException;
 
     // App
-    ResultPageResponseDTO<AppLandingFeaturedCategoryResponse> getFeaturedCategory(CompilerPagination f);
+    ResultPageResponseDTO<AppLandingFeaturedCategoryResponse> getFeaturedCategory(CompilerPagination f, String slug);
 }

@@ -122,10 +122,10 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
     }
 
     @Override
-    public ResultPageResponseDTO<AppLandingFeaturedCategoryResponse> getFeaturedCategory(CompilerPagination f) {
+    public ResultPageResponseDTO<AppLandingFeaturedCategoryResponse> getFeaturedCategory(CompilerPagination f, String slug) {
         SavedKeywordAndPageable set = GlobalConverter.appsCreatePageable(f.pages(), f.limit(), f.sortBy(), f.direction(), f.keyword(), null);
         // Use a correct Pageable for fetching the next page
-        Page<ProductCategory> pageResult = productCategoryRepository.findAllByIsActiveIsTrueAndIsLandingPageIsTrueAndParentIdIsNull(set.pageable());
+        Page<ProductCategory> pageResult = productCategoryRepository.findAllOrBySlugInLanding(set.pageable(), slug);
 
         // Map the data to the DTOs
         List<AppLandingFeaturedCategoryResponse> dtos = pageResult.stream().map((c) -> {
