@@ -3,6 +3,8 @@ package com.brandingku.web.model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.List;
+
 @Data
 public class ProductModel {
 
@@ -12,11 +14,14 @@ public class ProductModel {
         private String name;
         private String slug;
         private String description;
+        private String highlight_description;
         private Integer price;
         private Integer discount;
         private String discount_type;
         private Integer quantity;
-        private String thumbnail;
+        private String image;
+        private String highlight_image;
+        private Boolean is_highlight;
         private Boolean is_recommended;
         private Boolean is_upsell;
         private String category_name;
@@ -30,7 +35,6 @@ public class ProductModel {
             Integer discount,
             String discount_type,
             Integer quantity,
-            String thumbnail,
             Boolean is_recommended,
             Boolean is_upsell,
             String category_name,

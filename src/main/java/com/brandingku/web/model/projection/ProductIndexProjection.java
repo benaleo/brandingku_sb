@@ -11,11 +11,12 @@ public class ProductIndexProjection {
     private String name;
     private String slug;
     private String description;
+    private String highlightDescription;
     private Integer price;
     private Integer discount;
     private String discountType;
     private Integer quantity;
-    private String thumbnail;
+    private Boolean isHighlight;
     private Boolean isRecommended;
     private Boolean isUpsell;
     private String categoryName;

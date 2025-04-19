@@ -4,6 +4,9 @@ import com.brandingku.web.model.CompilerPagination;
 import com.brandingku.web.model.ProductModel;
 import com.brandingku.web.response.ResultPageResponseDTO;
 import jakarta.validation.Valid;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 public interface ProductService {
     ResultPageResponseDTO<ProductModel.ListProductResponse> getAllProduct(CompilerPagination f);
@@ -15,4 +18,6 @@ public interface ProductService {
     void updateProduct(String id, ProductModel.@Valid UpdateProductRequest req);
 
     void deleteProduct(String id);
+
+    void postHighlightProduct(String id, MultipartFile file, String description, Boolean isHighlight) throws IOException;
 }

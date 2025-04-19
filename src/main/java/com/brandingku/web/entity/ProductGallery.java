@@ -26,6 +26,9 @@ public class ProductGallery extends AbstractEntity{
     @JoinColumn(name = "product_id", referencedColumnName = "secure_id")
     private Product product;
 
+    @Column(name = "is_thumbnail")
+    private Boolean isThumbnail = false;
+
     @Override
     public Long getId() {return super.getId();}
 

@@ -20,7 +20,12 @@ public class UrlConverterService {
     @Value("${app.upload.dir}")
     private String UPLOAD_DIR;
 
+    public String saveUrlImageProduct(MultipartFile file) throws IOException {
+        return FileUploadHelper.urlSaveFile(file, UPLOAD_DIR + "/images/product", baseUrl);
+    }
+
     public String saveUrlImageProductCategory(MultipartFile file) throws IOException {
         return FileUploadHelper.urlSaveFile(file, UPLOAD_DIR + "/images/product-category", baseUrl);
     }
+
 }
