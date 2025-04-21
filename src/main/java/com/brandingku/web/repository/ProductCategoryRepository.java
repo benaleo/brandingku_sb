@@ -1,6 +1,7 @@
 package com.brandingku.web.repository;
 
 import com.brandingku.web.entity.ProductCategory;
+import com.brandingku.web.model.OptionResponse;
 import com.brandingku.web.model.projection.CastIdSecureIdProjection;
 import com.brandingku.web.model.projection.ProductCategoryIndexProjection;
 import org.springframework.data.domain.Page;
@@ -11,6 +12,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -60,4 +62,6 @@ public interface ProductCategoryRepository extends JpaRepository<ProductCategory
                 pc.isActive = true
             """)
     Page<ProductCategory> findAllOrBySlugInLanding(Pageable pageable, String slug);
+
+    List<ProductCategory> findAllByIsActiveIsTrue();
 }
