@@ -183,29 +183,10 @@ public class GlobalConverter {
         return PageRequest.of(pages, limit, Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy)));
     }
 
-
-    public static SavedKeywordAndPageable eZcreatePageable(
-            Integer pages,
-            Integer limit,
-            String sortBy,
-            String direction,
-            String keyword,
-            Page<?> firstResult,
-            Long totalData) {
-
-        long totalRecords = firstResult != null ? firstResult.getTotalElements() : totalData;
-        log.info("Total records: " + totalRecords);
-        int totalPages = (int) Math.ceil((double) totalRecords / limit);
-        log.info("Total pages: " + totalPages);
-        if (pages >= totalPages) {
-            pages = 0;
-            log.info("Reset pages to 0");
-        }
-
-        keyword = StringUtils.isEmpty(keyword) ? "%" : "%" + keyword + "%";
-        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
-        Pageable pageable = PageRequest.of(pages, limit, sort);
-        return new SavedKeywordAndPageable(keyword, pageable);
+    public static String makeSlug(String text) {
+        return text.toLowerCase()
+                .replaceAll("\\s+", "_")
+                .replaceAll("[^a-z0-9_]", "");
     }
 
 }

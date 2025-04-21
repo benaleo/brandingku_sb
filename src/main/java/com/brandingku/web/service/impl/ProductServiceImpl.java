@@ -86,7 +86,7 @@ public class ProductServiceImpl implements ProductService {
 
         Product data = new Product();
         data.setName(req.name());
-        data.setSlug(req.slug());
+        data.setSlug(req.slug() != null ? req.slug() : GlobalConverter.makeSlug(req.name()));
         data.setDescription(req.description());
         data.setPrice(req.price());
         data.setDiscount(req.discount());

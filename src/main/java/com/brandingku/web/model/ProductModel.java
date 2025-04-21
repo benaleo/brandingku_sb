@@ -59,7 +59,6 @@ public class ProductModel {
             Integer discount,
             String discount_type,
             Integer quantity,
-            String thumbnail,
             Boolean is_recommended,
             Boolean is_upsell,
             String category_id
@@ -74,7 +73,6 @@ public class ProductModel {
             Integer discount,
             String discount_type,
             Integer quantity,
-            String thumbnail,
             Boolean is_recommended,
             Boolean is_upsell,
             String category_id
