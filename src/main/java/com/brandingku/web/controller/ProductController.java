@@ -103,10 +103,10 @@ public class ProductController {
 
     // make highlight
     @Operation(description = "Update image product")
-    @PutMapping(value = "{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "{id}/image")
     public ResponseEntity<ApiResponse> postHighlightProduct(
             @PathVariable("id") String id,
-            @RequestParam(value = "file", required = false) MultipartFile file,
+            @RequestParam(value = "file", required = false) String file,
             @RequestParam(value = "description", required = false) String description,
             @RequestParam(value = "isHighlight", required = false) Boolean isHighlight
 
@@ -122,10 +122,10 @@ public class ProductController {
 
     // update product galleries
     @Operation(description = "Update image product")
-    @PutMapping(value = "{id}/gallery", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "{id}/gallery")
     public ResponseEntity<ApiResponse> postGalleryProduct(
             @PathVariable("id") String id,
-            @RequestParam(value = "newFile", required = false) List<MultipartFile> newFile,
+            @RequestParam(value = "newFile", required = false) List<String> newFile,
             @RequestParam(value = "removeId", required = false) List<String> removeId
     ) {
         try {

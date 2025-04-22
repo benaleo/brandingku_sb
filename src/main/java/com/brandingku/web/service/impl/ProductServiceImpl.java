@@ -24,7 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -129,10 +128,10 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductModel.ListProductResponse postHighlightProduct(String id, MultipartFile file, String description, Boolean isHighlight) throws IOException {
+    public ProductModel.ListProductResponse postHighlightProduct(String id, String file, String description, Boolean isHighlight) throws IOException {
         Product data = productRepository.findBySecureId(id).orElse(null);
         if (data != null) {
-            data.setHighlightImage(file == null ? data.getHighlightImage() : urlConverterService.saveUrlImageProduct(file));
+            data.setHighlightImage(file == null ? data.getHighlightImage() : file);
             data.setHighlightDescription(description);
             data.setIsHighlight(isHighlight == null ? data.getIsHighlight() : isHighlight);
             productRepository.save(data);
@@ -143,14 +142,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductModel.ListProductResponse postGalleryProduct(String id, List<MultipartFile> newFile, List<String> removeId) throws IOException {
+    public ProductModel.ListProductResponse postGalleryProduct(String id, List<String> newFile, List<String> removeId) throws IOException {
         Product data = productRepository.findBySecureId(id).orElse(null);
         if (data != null) {
             if (newFile != null) {
-                for (MultipartFile file : newFile) {
+                for (String url : newFile) {
                     ProductGallery gallery = new ProductGallery();
                     gallery.setProduct(data);
-                    gallery.setUrlFile(urlConverterService.saveUrlImageProduct(file));
+                    gallery.setUrlFile(url);
                     productGalleryRepository.save(gallery);
                 }
             }
