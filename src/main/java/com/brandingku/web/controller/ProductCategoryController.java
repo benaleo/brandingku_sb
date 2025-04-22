@@ -77,9 +77,21 @@ public class ProductCategoryController {
         }
     }
 
+//    @Operation(description = "Post image product category")
+//    @PutMapping(value = "{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    public ResponseEntity<ApiResponse> postImageProductCategory(@PathVariable("id") String id, @RequestParam("file") MultipartFile file) {
+//        try {
+//            productCategoryService.postImageProductCategory(id, file);
+//            return ResponseEntity.ok().body(new ApiResponse(true, "Success post image product category", null));
+//        } catch (Exception e) {
+//            log.error("Error post image product category : {}", e.getMessage(), e);
+//            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
+//        }
+//    }
+
     @Operation(description = "Post image product category")
-    @PutMapping(value = "{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse> postImageProductCategory(@PathVariable("id") String id, @RequestParam("file") MultipartFile file) {
+    @PutMapping(value = "{id}/image")
+    public ResponseEntity<ApiResponse> postImageProductCategory(@PathVariable("id") String id, @RequestParam("file") String file) {
         try {
             productCategoryService.postImageProductCategory(id, file);
             return ResponseEntity.ok().body(new ApiResponse(true, "Success post image product category", null));
