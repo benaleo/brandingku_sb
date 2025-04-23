@@ -31,11 +31,8 @@ public class Product extends AbstractEntity {
     @Column(columnDefinition = "text")
     private String HighlightDescription;
 
-    private Integer price;
-
-    private Integer discount;
-
-    private String discountType;
+    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductAdditional> additional;
 
     private Integer quantity;
 

@@ -1,5 +1,6 @@
 package com.brandingku.web.model;
 
+import com.brandingku.web.model.dto.ProductAdditionalDetailResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -41,16 +42,13 @@ public class ProductModel {
             String slug,
             String description,
             String highlight_description,
-            Integer price,
-            Integer discount,
-            String discount_type,
-            Integer quantity,
             String highlight_image,
             Boolean is_highlight,
             Boolean is_recommended,
             Boolean is_upsell,
             String category_name,
-            String category_id
+            String category_id,
+            List<ProductAdditionalDetailResponse> additionals
     ) {
     }
 
@@ -58,10 +56,6 @@ public class ProductModel {
             String name,
             String slug,
             String description,
-            Integer price,
-            Integer discount,
-            String discount_type,
-            Integer quantity,
             Boolean is_highlight,
             String highlight_image,
             String highlight_description,
