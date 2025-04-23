@@ -68,10 +68,13 @@ public class ProductServiceImpl implements ProductService {
                 data == null ? null : data.getName(),
                 data == null ? null : data.getSlug(),
                 data == null ? null : data.getDescription(),
+                data == null ? null : data.getHighlightDescription(),
                 data == null ? null : data.getPrice(),
                 data == null ? null : data.getDiscount(),
                 data == null ? null : data.getDiscountType(),
                 data == null ? null : data.getQuantity(),
+                data == null ? null : data.getHighlightImage(),
+                data == null ? null : data.getIsHighlight(),
                 data == null ? null : data.getIsRecommended(),
                 data == null ? null : data.getIsUpsell(),
                 data == null ? null : (data.getCategory() == null ? null : data.getCategory().getName()),
@@ -95,6 +98,13 @@ public class ProductServiceImpl implements ProductService {
         data.setIsUpsell(req.is_upsell());
         data.setCategory(productCategoryRepository.findBySecureId(req.category_id()).orElse(null));
 
+        data.setIsHighlight(false);
+        if (req.is_highlight() != null && req.is_highlight()) {
+            data.setHighlightImage(req.highlight_image());
+            data.setHighlightDescription(req.highlight_description());
+            data.setIsHighlight(true);
+        }
+
         GlobalConverter.CmsAdminCreateAtBy(data, user != null ? user.getId() : null);
         productRepository.save(data);
     }
@@ -115,6 +125,13 @@ public class ProductServiceImpl implements ProductService {
             data.setIsRecommended(req.is_recommended() != null ? req.is_recommended() : data.getIsRecommended());
             data.setIsUpsell(req.is_upsell() != null ? req.is_upsell() : data.getIsUpsell());
             data.setCategory(productCategoryRepository.findBySecureId(req.category_id() != null ? req.category_id() : data.getCategory().getSecureId()).orElse(null));
+
+            data.setIsHighlight(false);
+            if (req.is_highlight() != null && req.is_highlight()) {
+                data.setHighlightImage(req.highlight_image());
+                data.setHighlightDescription(req.highlight_description());
+                data.setIsHighlight(true);
+            }
 
             GlobalConverter.CmsAdminUpdateAtBy(data, user != null ? user.getId() : null);
             productRepository.save(data);

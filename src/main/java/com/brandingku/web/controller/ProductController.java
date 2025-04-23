@@ -100,26 +100,6 @@ public class ProductController {
         }
     }
 
-
-    // make highlight
-    @Operation(description = "Update image product")
-    @PutMapping(value = "{id}/image")
-    public ResponseEntity<ApiResponse> postHighlightProduct(
-            @PathVariable("id") String id,
-            @RequestParam(value = "file", required = false) String file,
-            @RequestParam(value = "description", required = false) String description,
-            @RequestParam(value = "isHighlight", required = false) Boolean isHighlight
-
-    ) {
-        try {
-            ProductModel.ListProductResponse response = productService.postHighlightProduct(id, file, description, isHighlight);
-            return ResponseEntity.ok().body(new ApiResponse(true, "Success update highlight product", response));
-        } catch (Exception e) {
-            log.error("Error post image product category : {}", e.getMessage(), e);
-            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
-        }
-    }
-
     // update product galleries
     @Operation(description = "Update image product")
     @PutMapping(value = "{id}/gallery")
