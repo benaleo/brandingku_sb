@@ -61,7 +61,8 @@ public class ProductModel {
             String highlight_description,
             Boolean is_recommended,
             Boolean is_upsell,
-            String category_id
+            String category_id,
+            List<ProductAdditionalDetailResponse> additionals
     ) {
     }
 
@@ -69,16 +70,13 @@ public class ProductModel {
             String name,
             String slug,
             String description,
-            Integer price,
-            Integer discount,
-            String discount_type,
-            Integer quantity,
             Boolean is_highlight,
             String highlight_image,
             String highlight_description,
             Boolean is_recommended,
             Boolean is_upsell,
-            String category_id
+            String category_id,
+            List<ProductAdditionalDetailResponse> additionals
     ) {
     }
 }
