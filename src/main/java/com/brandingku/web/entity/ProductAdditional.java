@@ -30,7 +30,7 @@ public class ProductAdditional  {
 
     private Integer moq;
 
-    private String stock;
+    private Integer stock;
 
     private Integer discount;
 

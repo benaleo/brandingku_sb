@@ -1,11 +1,13 @@
 package com.brandingku.web.service.impl;
 
 import com.brandingku.web.entity.Product;
+import com.brandingku.web.entity.ProductAdditional;
 import com.brandingku.web.entity.ProductGallery;
 import com.brandingku.web.entity.Users;
 import com.brandingku.web.exception.BadRequestException;
 import com.brandingku.web.model.CompilerPagination;
 import com.brandingku.web.model.ProductModel;
+import com.brandingku.web.model.dto.ProductAdditionalDetailResponse;
 import com.brandingku.web.model.search.ListOfFilterPagination;
 import com.brandingku.web.model.search.SavedKeywordAndPageable;
 import com.brandingku.web.repository.ProductCategoryRepository;
@@ -26,6 +28,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -64,6 +67,9 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductModel.DetailProductResponse getDetailProduct(String id) {
         Product data = productRepository.findBySecureId(id).orElse(null);
+
+        List<ProductAdditionalDetailResponse> additionalDetailResponses = getProductAdditionalDetailResponses(data);
+
         return new ProductModel.DetailProductResponse(
                 data == null ? null : data.getName(),
                 data == null ? null : data.getSlug(),
@@ -75,8 +81,25 @@ public class ProductServiceImpl implements ProductService {
                 data == null ? null : data.getIsUpsell(),
                 data == null ? null : (data.getCategory() == null ? null : data.getCategory().getName()),
                 data == null ? null : (data.getCategory() == null ? null : data.getCategory().getSecureId()),
-                null
+                additionalDetailResponses
         );
+    }
+
+    private static List<ProductAdditionalDetailResponse> getProductAdditionalDetailResponses(Product data) {
+        List<ProductAdditionalDetailResponse> additionalDetailResponses = new ArrayList<>();
+        List<ProductAdditional> additionals = data != null && !data.getAdditional().isEmpty() ? data.getAdditional() : new ArrayList<>();
+        for (ProductAdditional additional : additionals) {
+            additionalDetailResponses.add(new ProductAdditionalDetailResponse(
+                    additional.getSecureId(),
+                    additional.getPrice(),
+                    additional.getMoq(),
+                    additional.getStock(),
+                    additional.getDiscount(),
+                    additional.getDiscountType(),
+                    null
+            ));
+        }
+        return additionalDetailResponses;
     }
 
     @Override
