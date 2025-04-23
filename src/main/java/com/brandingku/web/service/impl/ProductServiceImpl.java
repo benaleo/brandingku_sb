@@ -1,19 +1,14 @@
 package com.brandingku.web.service.impl;
 
-import com.brandingku.web.entity.Product;
-import com.brandingku.web.entity.ProductAdditional;
-import com.brandingku.web.entity.ProductGallery;
-import com.brandingku.web.entity.Users;
+import com.brandingku.web.entity.*;
 import com.brandingku.web.exception.BadRequestException;
 import com.brandingku.web.model.CompilerPagination;
 import com.brandingku.web.model.ProductModel;
 import com.brandingku.web.model.dto.ProductAdditionalDetailResponse;
+import com.brandingku.web.model.dto.ProductAttributeDetailResponse;
 import com.brandingku.web.model.search.ListOfFilterPagination;
 import com.brandingku.web.model.search.SavedKeywordAndPageable;
-import com.brandingku.web.repository.ProductCategoryRepository;
-import com.brandingku.web.repository.ProductGalleryRepository;
-import com.brandingku.web.repository.ProductRepository;
-import com.brandingku.web.repository.UserRepository;
+import com.brandingku.web.repository.*;
 import com.brandingku.web.response.PageCreateReturn;
 import com.brandingku.web.response.ResultPageResponseDTO;
 import com.brandingku.web.service.ProductService;
@@ -41,6 +36,9 @@ public class ProductServiceImpl implements ProductService {
     private final ProductGalleryRepository productGalleryRepository;
     private final UserRepository userRepository;
     private final ProductCategoryRepository productCategoryRepository;
+    private final ProductAdditionalRepository productAdditionalRepository;
+    private final ProductAttributeRepository productAttributeRepository;
+    private final ProductAdditionalHasAttributeRepository productAdditionalHasAttributeRepository;
     private final UrlConverterService urlConverterService;
 
     @Override
@@ -85,21 +83,30 @@ public class ProductServiceImpl implements ProductService {
         );
     }
 
-    private static List<ProductAdditionalDetailResponse> getProductAdditionalDetailResponses(Product data) {
-        List<ProductAdditionalDetailResponse> additionalDetailResponses = new ArrayList<>();
-        List<ProductAdditional> additionals = data != null && !data.getAdditional().isEmpty() ? data.getAdditional() : new ArrayList<>();
-        for (ProductAdditional additional : additionals) {
-            additionalDetailResponses.add(new ProductAdditionalDetailResponse(
+    private List<ProductAdditionalDetailResponse> getProductAdditionalDetailResponses(Product data) {
+        if (data == null || data.getAdditional().isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return data.getAdditional().stream().map(additional -> {
+            List<ProductAttributeDetailResponse> listAttributes = productAdditionalHasAttributeRepository
+                    .findAllByAdditional(additional).stream()
+                    .map(attr -> new ProductAttributeDetailResponse(
+                            attr.getAttribute().getSecureId(),
+                            attr.getAttribute().getCategory(),
+                            attr.getAttribute().getName()))
+                    .collect(Collectors.toList());
+
+            return new ProductAdditionalDetailResponse(
                     additional.getSecureId(),
                     additional.getPrice(),
                     additional.getMoq(),
                     additional.getStock(),
                     additional.getDiscount(),
                     additional.getDiscountType(),
-                    null
-            ));
-        }
-        return additionalDetailResponses;
+                    listAttributes
+            );
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -113,16 +120,34 @@ public class ProductServiceImpl implements ProductService {
         data.setIsRecommended(req.is_recommended());
         data.setIsUpsell(req.is_upsell());
         data.setCategory(productCategoryRepository.findBySecureId(req.category_id()).orElse(null));
+        data.setIsHighlight(Boolean.TRUE.equals(req.is_highlight()));
 
-        data.setIsHighlight(false);
-        if (req.is_highlight() != null && req.is_highlight()) {
+        if (Boolean.TRUE.equals(req.is_highlight())) {
             data.setHighlightImage(req.highlight_image());
             data.setHighlightDescription(req.highlight_description());
-            data.setIsHighlight(true);
         }
 
         GlobalConverter.CmsAdminCreateAtBy(data, user != null ? user.getId() : null);
-        productRepository.save(data);
+        Product savedProduct = productRepository.save(data);
+
+        req.additionals().forEach(additional -> {
+            ProductAdditional newAdditional = new ProductAdditional(
+                    savedProduct,
+                    additional.price(),
+                    additional.moq(),
+                    additional.stock(),
+                    additional.discount(),
+                    additional.discount_type()
+            );
+
+            List<ProductAttribute> attributes = productAttributeRepository.findAllBySecureIdIn(
+                    additional.attributes().stream().map(ProductAttributeDetailResponse::id).collect(Collectors.toList())
+            );
+
+            attributes.forEach(attr -> productAdditionalHasAttributeRepository.save(
+                    new ProductAdditionalHasAttribute(newAdditional, attr)
+            ));
+        });
     }
 
     @Override
@@ -136,7 +161,10 @@ public class ProductServiceImpl implements ProductService {
             data.setDescription(req.description() != null ? req.description() : data.getDescription());
             data.setIsRecommended(req.is_recommended() != null ? req.is_recommended() : data.getIsRecommended());
             data.setIsUpsell(req.is_upsell() != null ? req.is_upsell() : data.getIsUpsell());
-            data.setCategory(productCategoryRepository.findBySecureId(req.category_id() != null ? req.category_id() : data.getCategory().getSecureId()).orElse(null));
+            data.setCategory(productCategoryRepository.findBySecureId(
+                    req.category_id() != null ? req.category_id() :
+                            (data.getCategory() != null ? data.getCategory().getSecureId() : null)
+            ).orElse(null));
 
             data.setIsHighlight(false);
             if (req.is_highlight() != null && req.is_highlight()) {
@@ -146,7 +174,26 @@ public class ProductServiceImpl implements ProductService {
             }
 
             GlobalConverter.CmsAdminUpdateAtBy(data, user != null ? user.getId() : null);
-            productRepository.save(data);
+            Product updatedProduct = productRepository.save(data);
+
+            if (req.additionals() != null) {
+                productAdditionalHasAttributeRepository.deleteAllByAdditionalIn(updatedProduct.getAdditional());
+
+                req.additionals().forEach(additional -> {
+
+                    ProductAdditional newAdditional = productAdditionalRepository.findBySecureId(additional.id()).orElseGet(
+                            () -> new ProductAdditional(updatedProduct, additional.price(), additional.moq(), additional.stock(), additional.discount(), additional.discount_type())
+                    );
+
+                    List<ProductAttribute> attributes = productAttributeRepository.findAllBySecureIdIn(
+                            additional.attributes().stream().map(ProductAttributeDetailResponse::id).collect(Collectors.toList())
+                    );
+
+                    attributes.forEach(attr -> productAdditionalHasAttributeRepository.save(
+                            new ProductAdditionalHasAttribute(newAdditional, attr)
+                    ));
+                });
+            }
         }
     }
 

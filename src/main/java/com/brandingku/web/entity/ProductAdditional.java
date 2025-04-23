@@ -39,5 +39,16 @@ public class ProductAdditional  {
     @OneToMany(mappedBy = "additional", cascade = CascadeType.ALL)
     private List<ProductAdditionalHasAttribute> attributes;
 
+    @ManyToOne
+    @JoinColumn(name = "product_id", referencedColumnName = "secure_id")
+    private Product product;
 
+    public ProductAdditional(Product product, Integer price, Integer moq, Integer stock, Integer discount, String discountType) {
+        this.price = price;
+        this.moq = moq;
+        this.stock = stock;
+        this.discount = discount;
+        this.discountType = discountType;
+        this.product = product;
+    }
 }

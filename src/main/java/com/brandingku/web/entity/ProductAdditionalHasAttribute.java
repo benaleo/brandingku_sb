@@ -37,4 +37,8 @@ public class ProductAdditionalHasAttribute  {
         ts = LocalDateTime.now();
     }
 
+    public ProductAdditionalHasAttribute(ProductAdditional additional, ProductAttribute attribute) {
+        this.additional = additional;
+        this.attribute = attribute;
+    }
 }
