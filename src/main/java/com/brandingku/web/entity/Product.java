@@ -31,11 +31,6 @@ public class Product extends AbstractEntity {
     @Column(columnDefinition = "text")
     private String HighlightDescription;
 
-    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductAdditional> additional;
-
-    private Integer quantity;
-
     @Column(columnDefinition = "text")
     private String highlightImage;
 
@@ -47,6 +42,9 @@ public class Product extends AbstractEntity {
 
     @OneToMany(mappedBy = "product",  fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductGallery> listGallery;
+
+    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductAdditional> additional;
 
     @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "secure_id")

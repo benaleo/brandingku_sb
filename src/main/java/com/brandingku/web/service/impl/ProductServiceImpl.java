@@ -69,16 +69,13 @@ public class ProductServiceImpl implements ProductService {
                 data == null ? null : data.getSlug(),
                 data == null ? null : data.getDescription(),
                 data == null ? null : data.getHighlightDescription(),
-                data == null ? null : data.getPrice(),
-                data == null ? null : data.getDiscount(),
-                data == null ? null : data.getDiscountType(),
-                data == null ? null : data.getQuantity(),
                 data == null ? null : data.getHighlightImage(),
                 data == null ? null : data.getIsHighlight(),
                 data == null ? null : data.getIsRecommended(),
                 data == null ? null : data.getIsUpsell(),
                 data == null ? null : (data.getCategory() == null ? null : data.getCategory().getName()),
-                data == null ? null : (data.getCategory() == null ? null : data.getCategory().getSecureId())
+                data == null ? null : (data.getCategory() == null ? null : data.getCategory().getSecureId()),
+                null
         );
     }
 
@@ -90,10 +87,6 @@ public class ProductServiceImpl implements ProductService {
         data.setName(req.name());
         data.setSlug(req.slug() != null ? req.slug() : GlobalConverter.makeSlug(req.name()));
         data.setDescription(req.description());
-        data.setPrice(req.price());
-        data.setDiscount(req.discount());
-        data.setDiscountType(req.discount_type());
-        data.setQuantity(req.quantity());
         data.setIsRecommended(req.is_recommended());
         data.setIsUpsell(req.is_upsell());
         data.setCategory(productCategoryRepository.findBySecureId(req.category_id()).orElse(null));
@@ -118,10 +111,6 @@ public class ProductServiceImpl implements ProductService {
             data.setName(req.name() != null ? req.name() : data.getName());
             data.setSlug(req.slug() != null ? req.slug() : data.getSlug());
             data.setDescription(req.description() != null ? req.description() : data.getDescription());
-            data.setPrice(req.price() != null ? req.price() : data.getPrice());
-            data.setDiscount(req.discount() != null ? req.discount() : data.getDiscount());
-            data.setDiscountType(req.discount_type() != null ? req.discount_type() : data.getDiscountType());
-            data.setQuantity(req.quantity() != null ? req.quantity() : data.getQuantity());
             data.setIsRecommended(req.is_recommended() != null ? req.is_recommended() : data.getIsRecommended());
             data.setIsUpsell(req.is_upsell() != null ? req.is_upsell() : data.getIsUpsell());
             data.setCategory(productCategoryRepository.findBySecureId(req.category_id() != null ? req.category_id() : data.getCategory().getSecureId()).orElse(null));
@@ -185,10 +174,6 @@ public class ProductServiceImpl implements ProductService {
         dto.setSlug(c.getSlug());
         dto.setDescription(c.getDescription());
         dto.setHighlight_description(c.getHighlightDescription());
-        dto.setPrice(c.getPrice());
-        dto.setDiscount(c.getDiscount());
-        dto.setDiscount_type(c.getDiscountType());
-        dto.setQuantity(c.getQuantity());
         dto.setImage(c.getFirstImage());
         dto.setHighlight_image(c.getHighlightImage());
         dto.setIs_highlight(c.getIsHighlight());

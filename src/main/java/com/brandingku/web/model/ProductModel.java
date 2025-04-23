@@ -17,10 +17,6 @@ public class ProductModel {
         private String slug;
         private String description;
         private String highlight_description;
-        private Integer price;
-        private Integer discount;
-        private String discount_type;
-        private Integer quantity;
         private String image;
         private List<ProductGalleryOptions> galleries;
         private String highlight_image;
