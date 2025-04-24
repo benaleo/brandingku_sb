@@ -16,9 +16,6 @@ import lombok.NoArgsConstructor;
 })
 public class ProductGallery extends AbstractEntity{
 
-    @Column(name = "name", nullable = false)
-    private String name;
-
     @Column(columnDefinition = "text")
     private String urlFile;
 

@@ -219,6 +219,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductModel.ListProductResponse postGalleryProduct(String id, List<String> newFile, List<String> removeId) throws IOException {
+        log.info("POST /cms/v1/product/{}/gallery endpoint hit", id);
+        log.info("new file: {}", newFile);
+        log.info("remove id: {}", removeId);
         Product data = productRepository.findBySecureId(id).orElse(null);
         if (data != null) {
             if (newFile != null) {
