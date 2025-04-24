@@ -1,6 +1,7 @@
 package com.brandingku.web.repository;
 
 import com.brandingku.web.entity.ProductAttribute;
+import com.brandingku.web.model.OptionWithCategoryResponse;
 import com.brandingku.web.model.projection.CastIdSecureIdProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -39,4 +40,5 @@ public interface ProductAttributeRepository extends JpaRepository<ProductAttribu
     @Query("UPDATE ProductAttribute d SET d.isDelete = true WHERE d = :data")
     void updateSoftDelete(ProductAttribute data);
 
+    List<ProductAttribute> findAllByIsActiveIsTrueAndIsDeleteIsFalse();
 }

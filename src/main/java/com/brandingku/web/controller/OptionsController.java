@@ -1,6 +1,7 @@
 package com.brandingku.web.controller;
 
 import com.brandingku.web.model.OptionResponse;
+import com.brandingku.web.model.OptionWithCategoryResponse;
 import com.brandingku.web.response.ApiResponse;
 import com.brandingku.web.service.OptionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -47,6 +48,18 @@ public class OptionsController {
             return ResponseEntity.ok().body(new ApiResponse(true, "Success get all product category", response));
         } catch (Exception e) {
             log.error("Error get all product category : {}", e.getMessage(), e);
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
+        }
+    }
+
+    @Operation(description = "Get all product category")
+    @GetMapping("/product-attributes")
+    public ResponseEntity<?> getAllProductAttributes() {
+        try {
+            List<OptionWithCategoryResponse> response = optionService.getListProductAttributes();
+            return ResponseEntity.ok().body(new ApiResponse(true, "Success get all product attribute", response));
+        } catch (Exception e) {
+            log.error("Error get all product attribute : {}", e.getMessage(), e);
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
         }
     }
