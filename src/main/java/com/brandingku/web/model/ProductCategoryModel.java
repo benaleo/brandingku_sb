@@ -14,26 +14,34 @@ public class ProductCategoryModel {
         private String slug;
         private String description;
         private String image;
+        private Boolean is_landing_page;
+        private Boolean is_active;
     }
 
     public record DetailProductCategoryResponse(
             String name,
             String slug,
-            String description
+            String description,
+            Boolean is_landing_page,
+            Boolean is_active
     ) {
     }
 
     public record CreateProductCategoryRequest(
             String name,
             String slug,
-            String description
+            String description,
+            Boolean is_landing_page,
+            Boolean is_active
     ) {
     }
 
     public record UpdateProductCategoryRequest(
             String name,
             String slug,
-            String description
+            String description,
+            Boolean is_landing_page,
+            Boolean is_active
     ) {
     }
 }

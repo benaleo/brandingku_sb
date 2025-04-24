@@ -12,6 +12,8 @@ public class ProductCategoryIndexProjection {
     private String slug;
     private String description;
     private String image;
+    private Boolean isLandingPage;
+    private Boolean isActive;
 
     private Long id;
     private String secureId;

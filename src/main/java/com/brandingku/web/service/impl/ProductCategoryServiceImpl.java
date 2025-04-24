@@ -34,7 +34,6 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 
     private final ProductCategoryRepository productCategoryRepository;
     private final UserRepository userRepository;
-    private final UrlConverterService urlConverterService;
 
     @Override
     public ResultPageResponseDTO<ProductCategoryModel.ListProductCategoryResponse> getAllProductCategory(CompilerPagination f) {
@@ -55,6 +54,8 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
             dto.setSlug(c.getSlug());
             dto.setDescription(c.getDescription());
             dto.setImage(c.getImage());
+            dto.setIs_landing_page(c.getIsLandingPage());
+            dto.setIs_active(c.getIsActive());
 
             GlobalConverter.CmsIDTimeStampResponseAndIdProjection(dto, c.getSecureId(), c.getCreatedAt(), c.getUpdatedAt(), c.getCreatedBy(), c.getCreatedBy());
             return dto;
@@ -72,7 +73,9 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         return new ProductCategoryModel.DetailProductCategoryResponse(
                 data == null ? null : data.getName(),
                 data == null ? null : data.getSlug(),
-                data == null ? null : data.getDescription()
+                data == null ? null : data.getDescription(),
+                data == null ? null : data.getIsLandingPage(),
+                data == null ? null : data.getIsActive()
         );
     }
 
@@ -80,12 +83,13 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
     public void createProductCategory(ProductCategoryModel.@Valid CreateProductCategoryRequest req) {
         Users user = userRepository.findById(ContextPrincipal.getId()).orElse(null);
 
-        long countAllData = productCategoryRepository.count();
-
         ProductCategory data = new ProductCategory();
         data.setName(req.name());
-        data.setSlug(req.slug());
+        data.setSlug(req.slug() != null ? req.slug() : GlobalConverter.makeSlug(req.name()));
         data.setDescription(req.description());
+        data.setIsLandingPage(req.is_landing_page());
+        data.setIsActive(req.is_active());
+
         GlobalConverter.CmsAdminCreateAtBy(data, user != null ? user.getId() : null);
         productCategoryRepository.save(data);
     }
@@ -99,6 +103,9 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
             data.setName(req.name() != null ? req.name() : data.getName());
             data.setSlug(req.slug() != null ? req.slug() : data.getSlug());
             data.setDescription(req.description() != null ? req.description() : data.getDescription());
+            data.setIsLandingPage(req.is_landing_page() != null ? req.is_landing_page() : data.getIsLandingPage());
+            data.setIsActive(req.is_active() != null ? req.is_active() : data.getIsActive());
+
             GlobalConverter.CmsAdminUpdateAtBy(data, user != null ? user.getId() : null);
             productCategoryRepository.save(data);
         }
