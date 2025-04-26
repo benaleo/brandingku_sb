@@ -36,11 +36,12 @@ public class ProductAttributeController {
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
-            @RequestParam(name = "keyword", required = false) String keyword
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "category", required = false) String category
     ) {
         try {
             CompilerPagination f = new CompilerPagination(pages, limit, sortBy, direction, keyword);
-            ResultPageResponseDTO<ProductAttributeModel.ListProductAttributeResponse> response = productAttributeService.getAllProductAttribute(f);
+            ResultPageResponseDTO<ProductAttributeModel.ListProductAttributeResponse> response = productAttributeService.getAllProductAttribute(f, category);
             return ResponseEntity.ok().body(new ApiResponse(true, "Success get all product attribute", response));
         } catch (Exception e) {
             log.error("Error get all product attribute : {}", e.getMessage(), e);

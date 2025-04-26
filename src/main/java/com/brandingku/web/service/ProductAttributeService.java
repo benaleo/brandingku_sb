@@ -6,7 +6,7 @@ import com.brandingku.web.response.ResultPageResponseDTO;
 import jakarta.validation.Valid;
 
 public interface ProductAttributeService {
-    ResultPageResponseDTO<ProductAttributeModel.ListProductAttributeResponse> getAllProductAttribute(CompilerPagination f);
+    ResultPageResponseDTO<ProductAttributeModel.ListProductAttributeResponse> getAllProductAttribute(CompilerPagination f, String category);
 
     ProductAttributeModel.DetailProductAttributeResponse getDetailProductAttribute(String id);
 

@@ -1,7 +1,6 @@
 package com.brandingku.web.repository;
 
 import com.brandingku.web.entity.ProductAttribute;
-import com.brandingku.web.model.OptionWithCategoryResponse;
 import com.brandingku.web.model.projection.CastIdSecureIdProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,11 +21,10 @@ public interface ProductAttributeRepository extends JpaRepository<ProductAttribu
             WHERE
             (LOWER(pa.name) LIKE LOWER(:keyword) OR
             LOWER(pa.category) LIKE LOWER(:keyword)) AND
-            pa.isDelete = false
+            pa.isDelete = false AND
+            (:category IS NULL OR pa.category = :category)
             """)
-    Page<ProductAttribute> findAllByKeywords(String keyword, Pageable pageable);
-
-    Optional<ProductAttribute> findBySecureId(String secureId);
+    Page<ProductAttribute> findAllByKeywords(String keyword, String category, Pageable pageable);
 
     @Query("""
             SELECT new com.brandingku.web.model.projection.CastIdSecureIdProjection(d.id, d.secureId)

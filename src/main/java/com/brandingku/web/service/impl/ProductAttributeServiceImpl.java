@@ -33,16 +33,16 @@ public class ProductAttributeServiceImpl implements ProductAttributeService {
     private final UserRepository userRepository;
 
     @Override
-    public ResultPageResponseDTO<ProductAttributeModel.ListProductAttributeResponse> getAllProductAttribute(CompilerPagination f) {
+    public ResultPageResponseDTO<ProductAttributeModel.ListProductAttributeResponse> getAllProductAttribute(CompilerPagination f, String category) {
         ListOfFilterPagination filter = new ListOfFilterPagination(f.keyword());
         SavedKeywordAndPageable set = GlobalConverter.appsCreatePageable(f.pages(), f.limit(), f.sortBy(), f.direction(), f.keyword(), filter);
 
         // First page result (get total count)
-        Page<ProductAttribute> firstResult = productAttributeRepository.findAllByKeywords(set.keyword(), set.pageable());
+        Page<ProductAttribute> firstResult = productAttributeRepository.findAllByKeywords(set.keyword(), category, set.pageable());
 
         // Use a correct Pageable for fetching the next page
         Pageable pageable = GlobalConverter.oldSetPageable(f.pages(), f.limit(), f.sortBy(), f.direction(), firstResult, null);
-        Page<ProductAttribute> pageResult = productAttributeRepository.findAllByKeywords(set.keyword(), pageable);
+        Page<ProductAttribute> pageResult = productAttributeRepository.findAllByKeywords(set.keyword(), category, pageable);
 
         // Map the data to the DTOs
         List<ProductAttributeModel.ListProductAttributeResponse> dtos = pageResult.stream().map((c) -> {
