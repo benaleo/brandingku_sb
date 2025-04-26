@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
@@ -37,6 +38,9 @@ public class ProductCategory extends AbstractEntity{
     @JoinColumn(name = "parent_id", referencedColumnName = "secure_id")
     private ProductCategory parent;
 
+    @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductCategory> subCategory;
+
     @Override
     public Long getId() {return super.getId();}
 
@@ -45,4 +49,8 @@ public class ProductCategory extends AbstractEntity{
 
     @Override
     public Boolean getIsActive() {return super.getIsActive();}
+
+    public List<String> getSubCategoryName(){
+        return subCategory.stream().map(ProductCategory::getName).toList();
+    }
 }

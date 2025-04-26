@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,6 +50,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 
         // Map the data to the DTOs
         List<ProductCategoryModel.ListProductCategoryResponse> dtos = pageResult.stream().map((c) -> {
+            ProductCategory data = productCategoryRepository.findById(c.getId()).orElse(null);
             ProductCategoryModel.ListProductCategoryResponse dto = new ProductCategoryModel.ListProductCategoryResponse();
             dto.setName(c.getName());
             dto.setSlug(c.getSlug());
@@ -56,6 +58,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
             dto.setImage(c.getImage());
             dto.setIs_landing_page(c.getIsLandingPage());
             dto.setIs_active(c.getIsActive());
+            dto.setSub_categories(productCategoryRepository.findAllByParent(data).stream().map(ProductCategory::getName).collect(Collectors.toList()));
 
             GlobalConverter.CmsIDTimeStampResponseAndIdProjection(dto, c.getSecureId(), c.getCreatedAt(), c.getUpdatedAt(), c.getCreatedBy(), c.getCreatedBy());
             return dto;
@@ -74,6 +77,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
                 data == null ? null : data.getName(),
                 data == null ? null : data.getSlug(),
                 data == null ? null : data.getDescription(),
+                data == null ? null : data.getSubCategoryName(),
                 data == null ? null : data.getIsLandingPage(),
                 data == null ? null : data.getIsActive()
         );
@@ -91,7 +95,11 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         data.setIsActive(req.is_active());
 
         GlobalConverter.CmsAdminCreateAtBy(data, user != null ? user.getId() : null);
-        productCategoryRepository.save(data);
+        ProductCategory savedData = productCategoryRepository.save(data);
+
+        for (String subCategory : req.sub_categories()) {
+            saveSubCategory(subCategory, savedData, user);
+        }
     }
 
     @Override
@@ -108,6 +116,25 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 
             GlobalConverter.CmsAdminUpdateAtBy(data, user != null ? user.getId() : null);
             productCategoryRepository.save(data);
+
+            List<String> reqSubCategories = req.sub_categories();
+            List<String> subCategories = data.getSubCategoryName();
+            List<String> filterSubCategories = subCategories.stream().filter(subCategory -> !reqSubCategories.contains(subCategory)).collect(Collectors.toList());
+
+            for (String subCategory : req.sub_categories()){
+                if (subCategories.contains(subCategory)) {
+                    continue;
+                }
+
+                if (productCategoryRepository.existsByNameAndParentAndIsActiveIsFalse(subCategory, data)){
+                    productCategoryRepository.updateIsActive(true, List.of(subCategory));
+                } else {
+                    saveSubCategory(subCategory, data, user);
+                }
+            }
+
+            // deactivate sub category
+            productCategoryRepository.updateIsActive(false, filterSubCategories);
         }
     }
 
@@ -148,5 +175,16 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
                 pageResult,
                 dtos
         );
+    }
+
+    // -- parse helper
+    private void saveSubCategory(String subCategory, ProductCategory savedData, Users user){
+        ProductCategory subCategoryData = new ProductCategory();
+        subCategoryData.setName(subCategory);
+        subCategoryData.setSlug(savedData.getSlug() + "_" + GlobalConverter.makeSlug(subCategory));
+        subCategoryData.setParent(savedData);
+        subCategoryData.setIsActive(true);
+        GlobalConverter.CmsAdminCreateAtBy(subCategoryData, user != null ? user.getId() : null);
+        productCategoryRepository.save(subCategoryData);
     }
 }

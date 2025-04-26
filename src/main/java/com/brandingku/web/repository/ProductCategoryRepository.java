@@ -26,7 +26,7 @@ public interface ProductCategoryRepository extends JpaRepository<ProductCategory
             FROM ProductCategory pc
             LEFT JOIN Users uc ON uc.id = pc.createdBy
             LEFT JOIN Users uu ON uu.id = pc.updatedBy
-            WHERE pc.isDelete = false
+            WHERE pc.isDelete = false AND pc.parent IS NULL
             """)
     Page<ProductCategoryIndexProjection> findDataByKeyword(String keyword, Pageable pageable);
 
@@ -64,4 +64,15 @@ public interface ProductCategoryRepository extends JpaRepository<ProductCategory
     Page<ProductCategory> findAllOrBySlugInLanding(Pageable pageable, String slug);
 
     List<ProductCategory> findAllByIsActiveIsTrue();
+
+    List<ProductCategory> findAllByParent(ProductCategory parent);
+
+    ProductCategory findByNameAndParent(String name, ProductCategory parent);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE ProductCategory d SET d.isActive = :isActive WHERE d.secureId IN :filterSubCategories")
+    void updateIsActive(boolean isActive, List<String> filterSubCategories);
+
+    boolean existsByNameAndParentAndIsActiveIsFalse(String name, ProductCategory parent);
 }
