@@ -182,7 +182,10 @@ public class ProductServiceImpl implements ProductService {
                 req.additionals().forEach(additional -> {
 
                     ProductAdditional newAdditional = productAdditionalRepository.findBySecureId(additional.id()).orElseGet(
-                            () -> new ProductAdditional(updatedProduct, additional.price(), additional.moq(), additional.stock(), additional.discount(), additional.discount_type())
+                            () -> {
+                                ProductAdditional productAdditional = new ProductAdditional(updatedProduct, additional.price(), additional.moq(), additional.stock(), additional.discount(), additional.discount_type());
+                                return productAdditionalRepository.save(productAdditional);
+                            }
                     );
 
                     List<ProductAttribute> attributes = productAttributeRepository.findAllBySecureIdIn(
