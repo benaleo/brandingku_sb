@@ -29,7 +29,7 @@ public class OptionServiceImpl implements OptionService {
 
     @Override
     public List<OptionResponse> getListProductCategories() {
-        return productCategoryRepository.findAllByIsActiveIsTrue().stream()
+        return productCategoryRepository.findAllByIsActiveIsTrueAndParentIsNotNull().stream()
                 .map(productCategory -> new OptionResponse(productCategory.getSecureId(), productCategory.getName()))
                 .toList();
     }
