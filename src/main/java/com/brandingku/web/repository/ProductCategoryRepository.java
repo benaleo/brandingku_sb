@@ -26,7 +26,8 @@ public interface ProductCategoryRepository extends JpaRepository<ProductCategory
             FROM ProductCategory pc
             LEFT JOIN Users uc ON uc.id = pc.createdBy
             LEFT JOIN Users uu ON uu.id = pc.updatedBy
-            WHERE pc.isDelete = false AND pc.parent IS NULL
+            WHERE pc.isDelete = false AND pc.parent IS NULL AND
+            (LOWER(pc.name) LIKE LOWER(:keyword))
             """)
     Page<ProductCategoryIndexProjection> findDataByKeyword(String keyword, Pageable pageable);
 
