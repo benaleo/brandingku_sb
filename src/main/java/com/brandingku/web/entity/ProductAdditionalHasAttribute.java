@@ -13,8 +13,8 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "product_attributes", indexes = {
-        @Index(name = "idx_product_attributes_secure_id", columnList = "secure_id", unique = true)
+@Table(name = "product_has_attributes", indexes = {
+        @Index(name = "idx_product_has_attributes_secure_id", columnList = "secure_id", unique = true)
 })
 public class ProductAdditionalHasAttribute  {
 

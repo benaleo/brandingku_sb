@@ -130,24 +130,8 @@ public class ProductServiceImpl implements ProductService {
         GlobalConverter.CmsAdminCreateAtBy(data, user != null ? user.getId() : null);
         Product savedProduct = productRepository.save(data);
 
-        req.additionals().forEach(additional -> {
-            ProductAdditional newAdditional = new ProductAdditional(
-                    savedProduct,
-                    additional.price(),
-                    additional.moq(),
-                    additional.stock(),
-                    additional.discount(),
-                    additional.discount_type()
-            );
-
-            List<ProductAttribute> attributes = productAttributeRepository.findAllBySecureIdIn(
-                    additional.attributes().stream().map(ProductAttributeDetailResponse::id).collect(Collectors.toList())
-            );
-
-            attributes.forEach(attr -> productAdditionalHasAttributeRepository.save(
-                    new ProductAdditionalHasAttribute(newAdditional, attr)
-            ));
-        });
+        // add product additional has attribute
+        parseAddHasAttributeResponse(req.additionals(), savedProduct);
     }
 
     @Override
@@ -176,27 +160,8 @@ public class ProductServiceImpl implements ProductService {
             GlobalConverter.CmsAdminUpdateAtBy(data, user != null ? user.getId() : null);
             Product updatedProduct = productRepository.save(data);
 
-            if (req.additionals() != null) {
-                productAdditionalHasAttributeRepository.deleteAllByAdditionalIn(updatedProduct.getAdditional());
-
-                req.additionals().forEach(additional -> {
-
-                    ProductAdditional newAdditional = productAdditionalRepository.findBySecureId(additional.id()).orElseGet(
-                            () -> {
-                                ProductAdditional productAdditional = new ProductAdditional(updatedProduct, additional.price(), additional.moq(), additional.stock(), additional.discount(), additional.discount_type());
-                                return productAdditionalRepository.save(productAdditional);
-                            }
-                    );
-
-                    List<ProductAttribute> attributes = productAttributeRepository.findAllBySecureIdIn(
-                            additional.attributes().stream().map(ProductAttributeDetailResponse::id).collect(Collectors.toList())
-                    );
-
-                    attributes.forEach(attr -> productAdditionalHasAttributeRepository.save(
-                            new ProductAdditionalHasAttribute(newAdditional, attr)
-                    ));
-                });
-            }
+            // add product additional has attribute
+            parseAddHasAttributeResponse(req.additionals(), updatedProduct);
         }
     }
 
@@ -263,5 +228,35 @@ public class ProductServiceImpl implements ProductService {
 
         GlobalConverter.CmsIDTimeStampResponseAndId(dto, c, userRepository);
         return dto;
+    }
+
+    // parse add has attribute response
+    private void parseAddHasAttributeResponse(List<ProductAdditionalDetailResponse> data, Product updatedProduct) {
+        if (data != null) {
+            productAdditionalHasAttributeRepository.deleteAllByAdditionalIn(updatedProduct.getAdditional());
+
+            data.forEach(additional -> {
+
+                ProductAdditional newAdditional = productAdditionalRepository.findBySecureId(additional.id()).orElseGet(
+                        () -> {
+                            ProductAdditional productAdditional = new ProductAdditional(updatedProduct, additional.price(), additional.moq(), additional.stock(), additional.discount(), additional.discount_type());
+                            return productAdditionalRepository.save(productAdditional);
+                        }
+                );
+
+                log.info("list attribute: {}", additional.attributes());
+
+                List<String> attributeIds = additional.attributes().stream().map(ProductAttributeDetailResponse::id).collect(Collectors.toList());
+                List<ProductAttribute> attributesData = productAttributeRepository.findAllBySecureIdIn(attributeIds);
+
+                attributesData.forEach(attr -> {
+                    if (!productAdditionalHasAttributeRepository.existsByAdditionalAndAttribute(newAdditional, attr)) {
+                        productAdditionalHasAttributeRepository.save(
+                                new ProductAdditionalHasAttribute(newAdditional, attr)
+                        );
+                    }
+                });
+            });
+        }
     }
 }
