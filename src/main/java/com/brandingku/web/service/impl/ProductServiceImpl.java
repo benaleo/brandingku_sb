@@ -42,16 +42,16 @@ public class ProductServiceImpl implements ProductService {
     private final UrlConverterService urlConverterService;
 
     @Override
-    public ResultPageResponseDTO<ProductModel.ListProductResponse> getAllProduct(CompilerPagination f) {
+    public ResultPageResponseDTO<ProductModel.ListProductResponse> getAllProduct(CompilerPagination f, String category) {
         ListOfFilterPagination filter = new ListOfFilterPagination(f.keyword());
         SavedKeywordAndPageable set = GlobalConverter.appsCreatePageable(f.pages(), f.limit(), f.sortBy(), f.direction(), f.keyword(), filter);
 
         // First page result (get total count)
-        Page<Product> firstResult = productRepository.findDataByKeyword(set.keyword(), set.pageable());
+        Page<Product> firstResult = productRepository.findDataByKeyword(set.keyword(), category, set.pageable());
 
         // Use a correct Pageable for fetching the next page
         Pageable pageable = GlobalConverter.oldSetPageable(f.pages(), f.limit(), f.sortBy(), f.direction(), firstResult, null);
-        Page<Product> pageResult = productRepository.findDataByKeyword(set.keyword(), pageable);
+        Page<Product> pageResult = productRepository.findDataByKeyword(set.keyword(), category, pageable);
 
         // Map the data to the DTOs
         List<ProductModel.ListProductResponse> dtos = pageResult.stream().map(this::parseIndexProductResponse).collect(Collectors.toList());

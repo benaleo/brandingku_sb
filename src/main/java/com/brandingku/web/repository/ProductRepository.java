@@ -16,10 +16,13 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("""
             SELECT p
             FROM Product p
+            JOIN p.category pc
             WHERE p.isDelete = false AND
-            (LOWER(p.name) LIKE LOWER(:keyword))
+            (LOWER(p.name) LIKE LOWER(:keyword) OR
+            LOWER(pc.name) LIKE LOWER(:keyword)) AND
+            (:category IS NULL OR pc.name = :category)
             """)
-    Page<Product> findDataByKeyword(String keyword, Pageable pageable);
+    Page<Product> findDataByKeyword(String keyword, String category, Pageable pageable);
 
     Optional<Product> findBySecureId(String id);
 

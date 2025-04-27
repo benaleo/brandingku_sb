@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.List;
 
 public interface ProductService {
-    ResultPageResponseDTO<ProductModel.ListProductResponse> getAllProduct(CompilerPagination f);
+    ResultPageResponseDTO<ProductModel.ListProductResponse> getAllProduct(CompilerPagination f, String category);
 
     ProductModel.DetailProductResponse getDetailProduct(String id);
 
